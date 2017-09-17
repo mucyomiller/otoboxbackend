@@ -1,6 +1,5 @@
-// Example express application adding the parse-server module to expose Parse
 // compatible API routes.
-
+require('dotenv').config();
 var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
@@ -48,7 +47,7 @@ app.get('/test', function(req, res) {
 var port = process.env.PORT || 1337;
 var httpServer = require('http').createServer(app);
 httpServer.listen(port, function() {
-    console.log('parse-server-example running on port ' + port + '.');
+    console.log('otobox backend is running on port ' + port + '.');
 });
 
 // This will enable the Live Query real-time server
