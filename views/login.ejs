@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<title>otobox - Sign In</title>
+<link href="/public/assets/images/logo.png" rel="icon" type="image/png">
+<link href="/public/assets/images/logo.png" rel="shortcut icon">
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" href="/public/dashboard/css/separate/pages/login.min.css">
+<link rel="stylesheet" href="/public/dashboard/css/lib/font-awesome/font-awesome.min.css">
+<link rel="stylesheet" href="/public/dashboard/css/lib/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="/public/dashboard/css/main.css">
+</head>
+<body>
+
+<div class="page-center">
+<div class="page-center-in">
+<div class="container-fluid">
+<form class="sign-box" method="POST" action="/login" >
+<input type="hidden" name="_token" value="rPNbYDrDo5oVSPaAOhx5Frg5Lgd5wsoqYxW38omf">
+<div class="sign-avatar">
+<img src="/public/dashboard/img/avatar-sign.png" alt="">
+</div>
+<header class="sign-title">Sign In</header>
+<% if (message.length > 0) { %>
+<div class="alert alert-danger"><%= message %></div>
+<% } %>
+<div class="form-group">
+<input type="text" class="form-control" placeholder="E-Mail or Phone" name="email" required autofocus/>
+</div>
+<div class="form-group">
+<input type="password" class="form-control" placeholder="Password" name="password" required />
+</div>
+<div class="form-group">
+<div class="checkbox float-left">
+<input type="checkbox" id="signed-in" name="remember" />
+<label for="signed-in">Keep me signed in</label>
+</div>
+<div class="float-right reset">
+</div>
+</div>
+<button type="submit" class="btn btn-rounded">Sign in</button>
+</form>
+</div>
+</div>
+</div><!--.page-center-->
+
+
+<script src="/public/dashboard/js/lib/jquery/jquery.min.js"></script>
+<script src="/public/dashboard/js/lib/tether/tether.min.js"></script>
+<script src="/public/dashboard/js/lib/bootstrap/bootstrap.min.js"></script>
+<script src="/public/dashboard/js/plugins.js"></script>
+<script type="text/javascript" src="/public/dashboard/js/lib/match-height/jquery.matchHeight.min.js"></script>
+<script>
+$(function() {
+$('.page-center').matchHeight({
+target: $('html')
+});
+
+$(window).resize(function(){
+setTimeout(function(){
+$('.page-center').matchHeight({ remove: true });
+$('.page-center').matchHeight({
+target: $('html')
+});
+},100);
+});
+});
+</script>
+<script src="/public/dashboard/js/app.js"></script>
+</body>
+</html>

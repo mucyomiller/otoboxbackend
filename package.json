@@ -9,11 +9,25 @@
   },
   "license": "MIT",
   "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
+    "body-parser": "*",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "~4.0.0",
+    "ejs": "^2.5.7",
     "express": "~4.11.x",
+    "express-session": "^1.15.5",
     "kerberos": "~0.0.x",
+    "method-override": "^2.3.9",
+    "mongoose": "^4.11.12",
+    "morgan": "^1.8.2",
+    "multer": "^1.3.0",
+    "nodemon": "^1.12.1",
     "parse": "~1.8.0",
+    "parse-dashboard": "^1.1.0",
     "parse-server": "*",
-    "dotenv": "~4.0.0"
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
   },
   "scripts": {
     "start": "node index.js"
