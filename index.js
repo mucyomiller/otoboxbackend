@@ -3,6 +3,7 @@ require('dotenv').config();
 var express = require('express');
 var multer  = require('multer');
 var ParseServer = require('parse-server').ParseServer;
+// var csrf = require('csurf')
 var bodyParser  = require('body-parser');
 var path = require('path');
 var Parse = require('parse/node');
@@ -14,8 +15,6 @@ var cookieParser = require('cookie-parser');
 var session      = require('express-session');
 
 var configDB = require('./config/database.js')
-
-
 
 
 //multer configs
@@ -55,7 +54,6 @@ Parse.initialize(process.env.APP_ID);
 Parse.serverURL = String(process.env.SERVER_URL)
 
 var app = express();
-
 //setting template engine
 app.set('view engine','ejs');
 app.set('views', path.join(__dirname,'views'));
@@ -71,6 +69,8 @@ require('./config/passport')(passport); // pass passport for configuration
 // set up our express application
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
+// app.use(csrf({ cookie: true }))
+
 // required for passport
 app.use(session({ secret: 'heykotlinkotlinhaha' })); // session secret
 app.use(passport.initialize());
@@ -207,6 +207,49 @@ app.post('/model/add',upload.single('modelpic'),(req,res)=>{
   });
   res.redirect('/model');
 });
+
+//supplier
+app.get('/supplier',function(req,res){
+  if(req.query.action){
+      res.render('supply',{query:req.query.action});
+  }
+  else{
+    var Supplier = Parse.Object.extend("Supplier");
+    var query = new Parse.Query(Supplier);
+    query.find({
+    success: function(Supplier) {
+      res.render('supply',{Suppliers: Supplier});
+    },
+    error: function(object, error) {
+    // The object was not retrieved successfully.
+    // error is a Parse.Error with an error code and message.
+    }
+    });
+  }
+});
+
+//suppliers add
+app.post('/supplier/add',(req,res)=>{
+  var Supplier = Parse.Object.extend("Supplier");
+  // Create a new instance of that class.
+  var mSupplier = new Supplier();
+  mSupplier.set("name",req.body.suppliername);
+  mSupplier.set("address", req.body.supplieraddress);
+  mSupplier.set("phone",req.body.supplierphone);
+  mSupplier.save(null, {
+    success: function(mSupplier) {
+      // Execute any logic that should take place after the object is saved.
+      console.info('New object created with objectId: ' + mSupplier.id);
+    },
+    error: function(mSupplier, error) {
+      // Execute any logic that should take place if the save fails.
+      // error is a Parse.Error with an error code and message.
+      console.error('Failed to create new object, with error code: ' + error.message);
+    }
+  });
+  res.redirect('/supplier');
+});
+
 
 // There will be a test page available on the /test path of your server url
 // Remove this before launching your app
