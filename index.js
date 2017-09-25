@@ -251,6 +251,49 @@ app.post('/supplier/add',(req,res)=>{
 });
 
 
+//category
+app.get('/category',function(req,res){
+  if(req.query.action){
+      res.render('category',{query:req.query.action});
+  }
+  else{
+    var Category = Parse.Object.extend("Category");
+    var query = new Parse.Query(Category);
+    query.find({
+    success: function(Category) {
+      res.render('category',{Categories: Category});
+    },
+    error: function(object, error) {
+    // The object was not retrieved successfully.
+    // error is a Parse.Error with an error code and message.
+    }
+    });
+  }
+});
+
+//suppliers add
+app.post('/category/add',(req,res)=>{
+  var Category = Parse.Object.extend("Category");
+  // Create a new instance of that class.
+  var mCategory = new Category();
+  mCategory.set("name",req.body.categoryname);
+  mCategory.set("order", req.body.order);
+  mCategory.save(null, {
+    success: function(mCategory) {
+      // Execute any logic that should take place after the object is saved.
+      console.info('New object created with objectId: ' + mCategory.id);
+    },
+    error: function(mCategory, error) {
+      // Execute any logic that should take place if the save fails.
+      // error is a Parse.Error with an error code and message.
+      console.error('Failed to create new object, with error code: ' + error.message);
+    }
+  });
+  res.redirect('/category');
+});
+
+
+
 // There will be a test page available on the /test path of your server url
 // Remove this before launching your app
 // app.get('/test', function(req, res) {

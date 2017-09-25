@@ -68,7 +68,7 @@
 <% } else { %>
 <section class="card">
 <header class="card-header card-header-lg">
-All Models <a href="/model?action=new" class="btn btn-rounded  btn-success-outline pull-right">Add new Model</a>
+All Models(<span class="label label-custom label-pill label-info"><%= Models.length %></span>) <a href="/model?action=new" class="btn btn-rounded  btn-success-outline pull-right">Add new Model</a>
 </header>
 <div class="card-block">
 <p class="card-text">
@@ -76,7 +76,7 @@ All Models <a href="/model?action=new" class="btn btn-rounded  btn-success-outli
 <table id="table-edit" class="table table-bordered table-hover table-responsive">
 <thead>
 <tr>
-<th width="1">Model Id#</th>
+<th width="1">No#</th>
 <th>Name</th>
 <th>Release Year</th>
 <th>Thumbnail url</th>
@@ -86,10 +86,10 @@ All Models <a href="/model?action=new" class="btn btn-rounded  btn-success-outli
 </tr>
 </thead>
 <tbody>
-<% Models.forEach((model)=>{
+<% var i=1;Models.forEach((model)=>{
 	%>
 		<tr>
-		<td><%= model.id  %></td>
+		<td><%= i++  %></td>
 		<td><%= model.get("name")  %></td>
 		<td><%= model.get("released")  %></td>
 		<td><%= model.get("url") %></td>
