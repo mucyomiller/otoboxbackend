@@ -50,10 +50,59 @@
 </form>
 </div><!--.row-->
 </div><!--.box-typical-->
+<% } else if(typeof query !== 'undefined' && query == "edit") { %>
+<header class="section-header">
+<div class="tbl">
+<div class="tbl-row">
+	<div class="tbl-cell">
+		<h3>Edit Supplier</h3>
+		<ol class="breadcrumb breadcrumb-simple">
+			<li><a href="/">Dashboard</a></li>
+			<li><a href="/supplier">Suppliers</a></li>
+			<li class="active">edit</li>
+		</ol>
+	</div>
+</div>
+</div>
+</header>
+
+<div class="box-typical box-typical-padding">
+<h5 class="m-t-lg with-border">Supplier info</h5>
+<form action="/supplier/edit/<%= Supplier.id %>" method="post">
+<div class="row">
+<div class="col-lg-6">
+	<fieldset class="form-group">
+		<label class="form-label semibold" for="suppliername">Supplier Name:</label>
+		<input type="text" name="suppliername" class="form-control" id="suppliername"  value="<%= Supplier.get("name") %>">
+	</fieldset>
+</div>
+<div class="col-lg-6">
+	<fieldset class="form-group">
+		<label class="form-label semibold" for="supplieraddress">Supplier Address:</label>
+		<input type="text" name="supplieraddress" value="<%= Supplier.get("address") %>" class="form-control" id="supplieraddress">
+	</fieldset>
+</div>
+</div><!--.row-->
+<div class="row">
+<div class="col-xs-6">
+	<label class="form-label semibold" for="supplierphone">Phone Number</label>
+	<input type="text" name="supplierphone" class="form-control" value="<%= Supplier.get("phone") %>" />
+</div>
+</div><!--.row-->
+<div class="row">
+<br>
+<div class="col-lg-6">
+<input type="submit"  name="save" class="btn btn-rounded  btn-primary-outline" value="Update supplier"/>
+</div>
+</div>
+</form>
+</div><!--.row-->
+</div><!--.box-typical-->
+
 <% } else { %>
 <section class="card">
 <header class="card-header card-header-lg">
-All Suppliers <a href="/supplier?action=new" class="btn btn-rounded  btn-success-outline pull-right">Add new Supplier</a>
+All Suppliers(<span class="label label-custom label-pill label-info"><%= Suppliers.length %></span>) <a href="/supplier?action=new" class="btn btn-rounded  btn-success-outline pull-right">Add new Supplier</a>
 </header>
 <div class="card-block">
 <p class="card-text">
@@ -61,7 +110,7 @@ All Suppliers <a href="/supplier?action=new" class="btn btn-rounded  btn-success
 <table id="table-edit" class="table table-bordered table-hover">
 <thead>
 <tr>
-<th width="1">Supplier Id#</th>
+<th width="1">No#</th>
 <th>Name</th>
 <th>Address</th>
 <th>Phonenumber</th>
@@ -70,15 +119,15 @@ All Suppliers <a href="/supplier?action=new" class="btn btn-rounded  btn-success
 </tr>
 </thead>
 <tbody>
-<% Suppliers.forEach((supplier)=>{
+<% var i=1;Suppliers.forEach((supplier)=>{
 	%>
 		<tr>
-		<td><%= supplier.id  %></td>
+		<td><%= i++  %></td>
 		<td><%= supplier.get("name")  %></td>
 		<td><%= supplier.get("address")  %></td>
 		<td><%= supplier.get("phone") %></td>
-		<td class="table-date"><a href="#">edit</a></td>
-		<td class="table-date"><a href="#">delete</a></td>
+		<td class="table-date"><a href="/supplier/edit/<%= supplier.id %>?action=edit">edit</a></td>
+		<td class="table-date"><a href="/supplier/remove/<%= supplier.id %>">delete</a></td>
 		</tr>
 <%
 }) %>

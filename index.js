@@ -256,6 +256,67 @@ app.post('/supplier/add',(req,res)=>{
   res.redirect('/supplier');
 });
 
+//supplier remove
+app.get('/supplier/remove/:id',(req,res)=>{
+
+  var Supplier = Parse.Object.extend("Supplier");
+  // Create a new instance of that class.
+  var mSupplier = new Supplier();
+  mSupplier.id = req.params.id;
+  mSupplier.destroy({
+    success: function(mSupplier) {
+      // The object was deleted from the Parse Cloud.
+      console.log("Supplier object delete it's id is"+mSupplier.id);
+      res.redirect('/supplier',{ message: req.flash('Successfully deleted') });
+    },
+    error: function(mSupplier, error) {
+      // The delete failed.
+      // error is a Parse.Error with an error code and message.
+      res.redirect('/supplier',{ message: req.flash('error occured!') });
+    }
+  });
+});
+
+//supplier edit
+app.get('/supplier/edit/:id',(req,res)=>{
+
+  if(req.query.action){
+    var Supplier = Parse.Object.extend("Supplier");
+    var query = new Parse.Query(Supplier);
+    query.get(req.params.id, {
+      success: function(supplier) {
+        // The object was retrieved successfully.
+        res.render('supply',{query:req.query.action,Supplier:supplier});
+      },
+      error: function(object, error) {
+        // The object was not retrieved successfully.
+        // error is a Parse.Error with an error code and message.
+      }
+    });
+   
+    }
+  });
+app.post('/supplier/edit/:id',(req,res)=>{
+    
+        var Supplier = Parse.Object.extend("Supplier");
+        var query = new Parse.Query(Supplier);
+        query.get(req.params.id, {
+          success: function(supplier) {
+            // The object was retrieved successfully.
+            // Now let update it
+            supplier.set("name", req.body.suppliername);
+            supplier.set("address", req.body.supplieraddress);
+            supplier.set("phone", req.body.supplierphone);
+            supplier.save();
+            res.redirect('/supplier');
+          },
+          error: function(object, error) {
+            // The object was not retrieved successfully.
+            // error is a Parse.Error with an error code and message.
+          }
+        });
+  });
+  
 
 //category
 app.get('/category',function(req,res){
