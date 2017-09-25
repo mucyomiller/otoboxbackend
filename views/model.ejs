@@ -93,8 +93,7 @@ All Models <a href="/model?action=new" class="btn btn-rounded  btn-success-outli
 		<td><%= model.get("name")  %></td>
 		<td><%= model.get("released")  %></td>
 		<td><%= model.get("url") %></td>
-		<td>
-		</td>
+		<td><%= model.get("parent").get("name")  %></td>
 		<td class="table-date"><%= model.createdAt  %></td>
 		<td class="table-date"><%= model.updatedAt  %></td>
 		</tr>

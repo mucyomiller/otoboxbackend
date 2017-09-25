@@ -170,6 +170,7 @@ app.get('/model',function(req,res){
   else{
     var Model = Parse.Object.extend("Model");
     var query = new Parse.Query(Model);
+    query.include("parent");
     query.find({
     success: function(Model) {
       res.render('model',{Models: Model});
