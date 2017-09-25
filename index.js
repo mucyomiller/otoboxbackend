@@ -13,6 +13,8 @@ var flash    = require('connect-flash');
 var morgan       = require('morgan');
 var cookieParser = require('cookie-parser');
 var session      = require('express-session');
+var moment = require('moment');
+var ejs = require('ejs');
 
 var configDB = require('./config/database.js')
 
@@ -54,6 +56,10 @@ Parse.initialize(process.env.APP_ID);
 Parse.serverURL = String(process.env.SERVER_URL)
 
 var app = express();
+//creating  fromnow function
+app.locals.fromNow = function(date){
+  return moment(date).fromNow();
+}
 //setting template engine
 app.set('view engine','ejs');
 app.set('views', path.join(__dirname,'views'));

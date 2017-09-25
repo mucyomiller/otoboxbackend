@@ -73,7 +73,7 @@ All Models(<span class="label label-custom label-pill label-info"><%= Models.len
 <div class="card-block">
 <p class="card-text">
 <div class="row">
-<table id="table-edit" class="table table-bordered table-hover table-responsive">
+<table id="table-edit" class="table table-bordered table-hover">
 <thead>
 <tr>
 <th width="1">No#</th>
@@ -94,8 +94,8 @@ All Models(<span class="label label-custom label-pill label-info"><%= Models.len
 		<td><%= model.get("released")  %></td>
 		<td><%= model.get("url") %></td>
 		<td><%= model.get("parent").get("name")  %></td>
-		<td class="table-date"><%= model.createdAt  %></td>
-		<td class="table-date"><%= model.updatedAt  %></td>
+		<td class="table-date"><%= fromNow(model.createdAt) %></td>
+		<td class="table-date"><%= fromNow(model.updatedAt) %></td>
 		</tr>
 <%
 }) %>

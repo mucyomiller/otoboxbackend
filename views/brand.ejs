@@ -55,7 +55,7 @@ All Brands(<span class="label label-custom label-pill label-info"><%= Brands.len
 <table id="table-edit" class="table table-bordered table-hover">
 <thead>
 <tr>
-<th width="1">Brand Id#</th>
+<th width="1">No#</th>
 <th>Name</th>
 <th>Url</th>
 <th width="120">Updated_at</th>
@@ -63,14 +63,14 @@ All Brands(<span class="label label-custom label-pill label-info"><%= Brands.len
 </tr>
 </thead>
 <tbody>
-<% Brands.forEach((brand) => {
+<% var i=1;Brands.forEach((brand) => {
 %>
 <tr>
-<td><%= brand.id %></td>
+<td><%= i++ %></td>
 <td><%= brand.get("name") %></td>
 <td><%= brand.get("url") %></td>
-<td class="table-date"><%= brand.updatedAt %></td>
-<td class="table-date"><%= brand.createdAt %></td>
+<td class="table-date"><%= fromNow(brand.updatedAt) %></td>
+<td class="table-date"><%= fromNow(brand.createdAt) %></td>
 </tr>
 <% }); %>
 </tbody>
