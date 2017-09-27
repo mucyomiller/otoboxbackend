@@ -2,3 +2,66 @@
 Parse.Cloud.define('hello', function(req, res) {
   res.success('Hi');
 });
+
+//cleanup whenever to delete Brand 
+Parse.Cloud.afterDelete("Brand", function(request) {
+  var query = new Parse.Query("Model");
+  query.equalTo("parent", request.object);
+
+  query.find().then(function(models) {
+    return Parse.Object.destroyAll(models);
+  }).then(function(success) {
+    // The related models were deleted
+    console.log("Associated models deleted successful");    
+  }, function(error) {
+    console.error("Error deleting related comments " + error.code + ": " + error.message);
+  });
+});
+
+//cleanup whenever you delete model
+
+Parse.Cloud.afterDelete("Model", function(request) {
+  var query = new Parse.Query("Spare");
+  query.equalTo("model", request.object);
+
+  query.find().then(function(spares) {
+    return Parse.Object.destroyAll(spares);
+  }).then(function(success) {
+    // The related spares were deleted
+    console.log("Associated Spares deleted successful");    
+  }, function(error) {
+    console.error("Error deleting related comments " + error.code + ": " + error.message);
+  });
+});
+
+//cleanup whenever you delete supplier
+Parse.Cloud.afterDelete("Supplier", function(request) {
+  var query = new Parse.Query("Spare");
+  query.equalTo("supplier", request.object);
+
+  query.find().then(function(spares) {
+    return Parse.Object.destroyAll(spares);
+  }).then(function(success) {
+    // The related spares were deleted
+    console.log("Associated Spares deleted successful");
+  }, function(error) {
+    console.error("Error deleting related comments " + error.code + ": " + error.message);
+  });
+});
+
+//cleanup whenever you delete category
+Parse.Cloud.afterDelete("Category", function(request) {
+  var query = new Parse.Query("Spare");
+  query.equalTo("category", request.object);
+
+  query.find().then(function(spares) {
+    return Parse.Object.destroyAll(spares);
+  }).then(function(success) {
+    // The related spares were deleted
+    console.log("Associated Spares deleted successful");
+  }, function(error) {
+    console.error("Error deleting related comments " + error.code + ": " + error.message);
+  });
+});
+
+

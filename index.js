@@ -115,7 +115,7 @@ app.get('/',isLoggedIn, function(req, res) {
 app.get('/profile2',function(req,res){
   res.render('profile');
 });
-app.get('/brand',function(req,res){
+app.get('/brand',isLoggedIn,function(req,res){
   if(req.query.action){
     res.render('brand',{query:req.query.action});
   }
@@ -139,7 +139,7 @@ app.get('/brand',function(req,res){
   }
 });
 
-app.post('/brand/add',upload.single('brandpic'),(req,res)=>{
+app.post('/brand/add',isLoggedIn,upload.single('brandpic'),(req,res)=>{
   var Brand = Parse.Object.extend("Brand");
   // Create a new instance of that class.
   var mBrand = new Brand();
@@ -159,7 +159,7 @@ app.post('/brand/add',upload.single('brandpic'),(req,res)=>{
   res.redirect('/brand');
 });
 
-app.get('/model',function(req,res){
+app.get('/model',isLoggedIn,function(req,res){
   if(req.query.action){
     var Brand = Parse.Object.extend("Brand");
     var query = new Parse.Query(Brand);
@@ -189,7 +189,7 @@ app.get('/model',function(req,res){
   }
 });
 
-app.post('/model/add',upload.single('modelpic'),(req,res)=>{
+app.post('/model/add',isLoggedIn,upload.single('modelpic'),(req,res)=>{
   var Brand = Parse.Object.extend("Brand");
   // Create a new instance of that class.
   var mBrand = new Brand();
@@ -215,7 +215,7 @@ app.post('/model/add',upload.single('modelpic'),(req,res)=>{
 });
 
 //spares
-app.get('/spare',function(req,res){
+app.get('/spare',isLoggedIn,function(req,res){
   if(req.query.action){
     var Spare = Parse.Object.extend("Spare");
     var mSpare = new Parse.Query(Spare);
@@ -263,7 +263,7 @@ app.get('/spare',function(req,res){
   }
 });
 
-app.post('/spare/add',upload.single('sparepic'),(req,res)=>{
+app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   var Spare = Parse.Object.extend("Spare");
   var mSpare = new Spare();
 
@@ -300,7 +300,7 @@ app.post('/spare/add',upload.single('sparepic'),(req,res)=>{
 
 
 //supplier
-app.get('/supplier',function(req,res){
+app.get('/supplier',isLoggedIn,function(req,res){
   if(req.query.action){
       res.render('supply',{query:req.query.action});
   }
@@ -320,7 +320,7 @@ app.get('/supplier',function(req,res){
 });
 
 //suppliers add
-app.post('/supplier/add',(req,res)=>{
+app.post('/supplier/add',isLoggedIn,(req,res)=>{
   var Supplier = Parse.Object.extend("Supplier");
   // Create a new instance of that class.
   var mSupplier = new Supplier();
@@ -342,7 +342,7 @@ app.post('/supplier/add',(req,res)=>{
 });
 
 //supplier remove
-app.get('/supplier/remove/:id',(req,res)=>{
+app.get('/supplier/remove/:id',isLoggedIn,(req,res)=>{
 
   var Supplier = Parse.Object.extend("Supplier");
   // Create a new instance of that class.
@@ -364,7 +364,7 @@ app.get('/supplier/remove/:id',(req,res)=>{
 });
 
 //supplier edit
-app.get('/supplier/edit/:id',(req,res)=>{
+app.get('/supplier/edit/:id',isLoggedIn,(req,res)=>{
 
   if(req.query.action){
     var Supplier = Parse.Object.extend("Supplier");
@@ -382,7 +382,7 @@ app.get('/supplier/edit/:id',(req,res)=>{
    
     }
   });
-app.post('/supplier/edit/:id',(req,res)=>{
+app.post('/supplier/edit/:id',isLoggedIn,(req,res)=>{
     
         var Supplier = Parse.Object.extend("Supplier");
         var query = new Parse.Query(Supplier);
@@ -405,7 +405,7 @@ app.post('/supplier/edit/:id',(req,res)=>{
   
 
 //category
-app.get('/category',function(req,res){
+app.get('/category',isLoggedIn,function(req,res){
   if(req.query.action){
       res.render('category',{query:req.query.action});
   }
@@ -425,7 +425,7 @@ app.get('/category',function(req,res){
 });
 
 //suppliers add
-app.post('/category/add',(req,res)=>{
+app.post('/category/add',isLoggedIn,(req,res)=>{
   var Category = Parse.Object.extend("Category");
   // Create a new instance of that class.
   var mCategory = new Category();
