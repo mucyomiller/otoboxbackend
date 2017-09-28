@@ -110,7 +110,7 @@ All Brands(<span class="label label-custom label-pill label-info"><%= Brands.len
 <tr>
 <td><%= i++ %></td>
 <td><%= brand.get("name") %></td>
-<td><%= brand.get("url") %></td>
+<td><img src="/<%= brand.get("url") %>" width="100" height="100" /></td>
 <td class="table-date"><a href="/brand/edit/<%= brand.id %>?action=edit">edit</a></td>
 <td class="table-date"><a href="/brand/remove/<%= brand.id %>">delete</a></td>
 </tr>
