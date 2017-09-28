@@ -159,6 +159,69 @@ app.post('/brand/add',isLoggedIn,upload.single('brandpic'),(req,res)=>{
   res.redirect('/brand');
 });
 
+//brand remove
+app.get('/brand/remove/:id',isLoggedIn,(req,res)=>{
+  
+    var Brand = Parse.Object.extend("Brand");
+    // Create a new instance of that class.
+    var mBrand = new Brand();
+    mBrand.id = req.params.id;
+    mBrand.destroy({
+      success: function(mBrand) {
+        // The object was deleted from the Parse Cloud.
+        console.log("Brand object delete it's id is"+mBrand.id);
+        req.flash('message',req.flash('Successfully deleted'));
+      },
+      error: function(mBrand, error) {
+        // The delete failed.
+        // error is a Parse.Error with an error code and message.
+        req.flash('message',req.flash('error occured!'));
+      }
+    });
+    res.redirect('/brand');
+  });  
+
+//brand edit
+app.get('/brand/edit/:id',isLoggedIn,(req,res)=>{
+  
+    if(req.query.action){
+      var Brand = Parse.Object.extend("Brand");
+      var query = new Parse.Query(Brand);
+      query.get(req.params.id, {
+        success: function(brand) {
+          // The object was retrieved successfully.
+          res.render('brand',{query:req.query.action,Brand:brand});
+        },
+        error: function(object, error) {
+          // The object was not retrieved successfully.
+          // error is a Parse.Error with an error code and message.
+        }
+      });
+     
+      }
+    });
+app.post('/brand/edit/:id',isLoggedIn,upload.single('brandpic'),(req,res)=>{
+      
+          var Brand = Parse.Object.extend("Brand");
+          var query = new Parse.Query(Brand);
+          query.get(req.params.id, {
+            success: function(brand) {
+              // The object was retrieved successfully.
+              // Now let update it
+              brand.set("name", req.body.brandname);
+              brand.set("url", req.file.path);
+              brand.save();
+              res.redirect('/brand');
+            },
+            error: function(object, error) {
+              // The object was not retrieved successfully.
+              // error is a Parse.Error with an error code and message.
+            }
+          });
+    });
+
+
+    
 app.get('/model',isLoggedIn,function(req,res){
   if(req.query.action){
     var Brand = Parse.Object.extend("Brand");
@@ -213,6 +276,74 @@ app.post('/model/add',isLoggedIn,upload.single('modelpic'),(req,res)=>{
   });
   res.redirect('/model');
 });
+//model remove
+app.get('/model/remove/:id',isLoggedIn,(req,res)=>{
+  
+    var Model = Parse.Object.extend("Model");
+    // Create a new instance of that class.
+    var mModel = new Model();
+    mModel.id = req.params.id;
+    mModel.destroy({
+      success: function(mModel) {
+        // The object was deleted from the Parse Cloud.
+        console.log("Model object delete it's id is"+mModel.id);
+        req.flash('message',req.flash('Successfully deleted'));
+      },
+      error: function(mModel, error) {
+        // The delete failed.
+        // error is a Parse.Error with an error code and message.
+        req.flash('message',req.flash('error occured!'));
+      }
+    });
+    res.redirect('/model');
+  });  
+
+//model edit
+app.get('/model/edit/:id',isLoggedIn,(req,res)=>{
+  
+    if(req.query.action){
+     
+      var Brand = Parse.Object.extend("Brand");
+      var mBrand = new Parse.Query(Brand);      
+      var myBrand = mBrand.find().then((Brand)=> {
+      return Brand;
+      });
+      var Model = Parse.Object.extend("Model");
+      var query = new Parse.Query(Model);
+      var myModel = query.get(req.params.id).then((model)=>{
+        return model;
+      });
+      Promise.all([myModel,myBrand]).then(([model,brand])=>{
+        res.render('model',{query:req.query.action,Model:model,Brands:brand});
+      });
+      }
+    });
+
+app.post('/model/edit/:id',isLoggedIn,upload.single('modelpic'),(req,res)=>{
+      
+          var Model = Parse.Object.extend("Model");
+          var query = new Parse.Query(Model);
+          query.get(req.params.id, {
+            success: function(model) {
+              // The object was retrieved successfully.
+              var Brand = Parse.Object.extend("Brand");
+              // Create a new instance of that class.
+              var mBrand = new Brand();
+              mBrand.id = req.body.brandid;
+              model.set("name",req.body.modelname);
+              model.set("released", req.body.modelyear);
+              model.set("url",req.file.path);
+              model.set("parent", mBrand);
+              // Now let update it
+              model.save();
+              res.redirect('/model');
+            },
+            error: function(object, error) {
+              // The object was not retrieved successfully.
+              // error is a Parse.Error with an error code and message.
+            }
+          });
+    });
 
 //spares
 app.get('/spare',isLoggedIn,function(req,res){
@@ -297,6 +428,97 @@ app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   });
   res.redirect('/spare');
 });
+
+//spare remove
+app.get('/spare/remove/:id',isLoggedIn,(req,res)=>{
+  
+    var Spare = Parse.Object.extend("Spare");
+    // Create a new instance of that class.
+    var mSpare = new Spare();
+    mSpare.id = req.params.id;
+    mSpare.destroy({
+      success: function(mSpare) {
+        // The object was deleted from the Parse Cloud.
+        console.log("Spare object delete it's id is"+mSpare.id);
+        req.flash('message',req.flash('Successfully deleted'));
+      },
+      error: function(mSpare, error) {
+        // The delete failed.
+        // error is a Parse.Error with an error code and message.
+        req.flash('message',req.flash('error occured!'));
+      }
+    });
+    res.redirect('/spare');
+  });  
+
+//spare edit
+app.get('/spare/edit/:id',isLoggedIn,(req,res)=>{
+  
+    if(req.query.action){
+      var Spare = Parse.Object.extend("Spare");
+      var mSpare = new Parse.Query(Spare);
+      var mCurrentSpare = mSpare.get(req.params.id).then((spare)=>{
+        return spare;
+      });
+      var Supplier = Parse.Object.extend("Supplier");
+      var mSupplier = new Parse.Query(Supplier);
+      var Model = Parse.Object.extend("Model");
+      var mModel = new Parse.Query(Model);
+      var Category = Parse.Object.extend("Category");
+      var mCategory = new Parse.Query(Category);
+  
+      var mySpare = mSpare.find().then((Spare)=> {
+        return Spare;
+      });
+      var myModel = mModel.find().then((Model)=>{
+        return Model;
+      })
+      var mySupplier = mSupplier.find().then((Supplier)=>{
+        return Supplier;
+      });
+      var myCategory = mCategory.find().then((Category)=>{
+        return Category;
+      });
+      return Promise.all([mySpare,myModel,mySupplier,myCategory,mCurrentSpare]).then(([spare,model,supplier,category,current])=>{
+        // console.log(model);
+        res.render('spare',{query:req.query.action,Spares: spare,Models:model,Suppliers:supplier,Categories:category,Spare:current});
+      });
+      }
+    });
+
+app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
+          var Spare = Parse.Object.extend("Spare");
+          var query = new Parse.Query(Spare);
+          query.get(req.params.id, {
+            success: function(spare) {
+              // The object was retrieved successfully.
+              var Model = Parse.Object.extend("Model");
+              var mModel = new Model();
+              mModel.id = req.body.modelid;
+              var Supplier = Parse.Object.extend("Supplier");
+              var mSupplier = new Supplier();
+              mSupplier.id = req.body.supplierid;
+              var Category = Parse.Object.extend("Category");
+              var mCategory = new Category();
+              mCategory.id = req.body.categoryid;
+            
+              spare.set("name",req.body.sparename);
+              spare.set("quality", req.body.sparequality);
+              spare.set("quantity", req.body.sparequantity);
+              spare.set("url",req.file.path);
+              spare.set("supplier", mSupplier);
+              spare.set("model", mModel);
+              spare.set("category",mCategory);
+              // Now let update it
+              spare.save();
+              res.redirect('/spare');
+            },
+            error: function(object, error) {
+              // The object was not retrieved successfully.
+              // error is a Parse.Error with an error code and message.
+            }
+          });
+    });
 
 
 //supplier
@@ -444,6 +666,66 @@ app.post('/category/add',isLoggedIn,(req,res)=>{
   });
   res.redirect('/category');
 });
+
+//category remove
+app.get('/category/remove/:id',isLoggedIn,(req,res)=>{
+  
+    var Category = Parse.Object.extend("Category");
+    // Create a new instance of that class.
+    var mCategory = new Category();
+    mCategory.id = req.params.id;
+    mCategory.destroy({
+      success: function(mCategory) {
+        // The object was deleted from the Parse Cloud.
+        console.log("Category object delete it's id is"+mCategory.id);
+        req.flash('message',req.flash('Successfully deleted'));
+      },
+      error: function(mCategory, error) {
+        // The delete failed.
+        // error is a Parse.Error with an error code and message.
+        req.flash('message',req.flash('error occured!'));
+      }
+    });
+    res.redirect('/category');
+  });  
+
+//category edit
+app.get('/category/edit/:id',isLoggedIn,(req,res)=>{
+  
+    if(req.query.action){
+      var Category = Parse.Object.extend("Category");
+      var query = new Parse.Query(Category);
+      query.get(req.params.id, {
+        success: function(category) {
+          // The object was retrieved successfully.
+          res.render('category',{query:req.query.action,Category:category});
+        },
+        error: function(object, error) {
+          // The object was not retrieved successfully.
+          // error is a Parse.Error with an error code and message.
+        }
+      });
+      }
+    });
+app.post('/category/edit/:id',isLoggedIn,(req,res)=>{
+      
+          var Category = Parse.Object.extend("Category");
+          var query = new Parse.Query(Category);
+          query.get(req.params.id, {
+            success: function(category) {
+              // The object was retrieved successfully.
+              // Now let update it
+              category.set("name", req.body.categoryname);
+              category.set("order",req.body.order);
+              category.save();
+              res.redirect('/category');
+            },
+            error: function(object, error) {
+              // The object was not retrieved successfully.
+              // error is a Parse.Error with an error code and message.
+            }
+          });
+    });
 
 
 

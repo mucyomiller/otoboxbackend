@@ -44,6 +44,48 @@
 </form>
 </div><!--.row-->
 </div><!--.box-typical-->
+<% } else if(typeof query !== 'undefined' && query == "edit") { %>
+<header class="section-header">
+<div class="tbl">
+<div class="tbl-row">
+	<div class="tbl-cell">
+		<h3>EditBrand</h3>
+		<ol class="breadcrumb breadcrumb-simple">
+			<li><a href="/">Dashboard</a></li>
+			<li><a href="/brand">Brands</a></li>
+			<li class="active">Edit</li>
+		</ol>
+	</div>
+</div>
+</div>
+</header>
+
+<div class="box-typical box-typical-padding">
+<h5 class="m-t-lg with-border">Brand infos</h5>
+<form action="/brand/edit/<%= Brand.id %>" method="post" enctype="multipart/form-data">
+<div class="row">
+<div class="col-md-6 col-sm-6">
+<fieldset class="form-group">
+		<label class="form-label semibold" for="modelname">Brand Name:</label>
+		<input type="text" name="brandname" class="form-control" value="<%= Brand.get("name") %>" id="brandname" placeholder="Enter Brand Name">
+	</fieldset>
+</div>
+</div><!--.row-->
+<div class="row">
+<div class="col-xs-6">
+	<label class="form-label semibold" for="modelpic">Add Brand logo</label>
+	<input type="file" name="brandpic"  class="form-control" >
+</div>
+</div><!--.row-->
+<div class="row">
+<br>
+<div class="col-lg-6">
+<input type="submit"  name="save" class="btn btn-rounded  btn-primary-outline" value="update brand"/>
+</div>
+</div>
+</form>
+</div><!--.row-->
+</div><!--.box-typical-->
 <% } else { %>
 <section class="card">
 <header class="card-header card-header-lg">
@@ -58,8 +100,8 @@ All Brands(<span class="label label-custom label-pill label-info"><%= Brands.len
 <th width="1">No#</th>
 <th>Name</th>
 <th>Url</th>
-<th width="120">Updated_at</th>
-<th width="120">Created_at</th>
+<th width="120">Edit</th>
+<th width="120">Delete</th>
 </tr>
 </thead>
 <tbody>
@@ -69,8 +111,8 @@ All Brands(<span class="label label-custom label-pill label-info"><%= Brands.len
 <td><%= i++ %></td>
 <td><%= brand.get("name") %></td>
 <td><%= brand.get("url") %></td>
-<td class="table-date"><%= fromNow(brand.updatedAt) %></td>
-<td class="table-date"><%= fromNow(brand.createdAt) %></td>
+<td class="table-date"><a href="/brand/edit/<%= brand.id %>?action=edit">edit</a></td>
+<td class="table-date"><a href="/brand/remove/<%= brand.id %>">delete</a></td>
 </tr>
 <% }); %>
 </tbody>

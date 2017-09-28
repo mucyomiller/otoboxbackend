@@ -69,8 +69,8 @@
 <div class="row">
 <div class="col-lg-6">
 	<fieldset class="form-group">
-		<label class="form-label semibold" for="modelname">spare Name:</label>
-		<input type="text" name="sparename" class="form-control" id="modelname" placeholder="Enter Model Name">
+		<label class="form-label semibold" for="sparename">spare Name:</label>
+		<input type="text" name="sparename" class="form-control" id="sparename" placeholder="Enter Spare Name">
 	</fieldset>
 </div>
 <div class="col-lg-6">
@@ -99,6 +99,108 @@
 <br>
 <div class="col-lg-6">
 <input type="submit"  name="save" class="btn btn-rounded  btn-primary-outline" value="save Spare"/>
+</div>
+</div>
+</form>
+</div><!--.row-->
+</div><!--.box-typical-->
+<% } else if(typeof query !== 'undefined' && query == "edit") { %>
+<header class="section-header">
+<div class="tbl">
+<div class="tbl-row">
+	<div class="tbl-cell">
+		<h3>Edit Spare part</h3>
+		<ol class="breadcrumb breadcrumb-simple">
+			<li><a href="/">Dashboard</a></li>
+			<li><a href="/spare">Spare parts</a></li>
+			<li class="active">Edit</li>
+		</ol>
+	</div>
+</div>
+</div>
+</header>
+
+<div class="box-typical box-typical-padding">
+<h5 class="m-t-lg with-border">Spare Parts Infos</h5>
+<form action="/spare/edit/<%= Spare.id %>" method="post" enctype="multipart/form-data">
+<div class="row">
+<div class="col-md-6 col-sm-6">
+	<fieldset class="form-group">
+		<label class="form-label semibold" for="modelid">Choose Model Spare belongsTo</label>
+		<select  name="modelid" class="form-control">
+		<% Models.forEach((model)=>{
+		%>
+		 <option value="<%= model.id %>" <%= Spare.get("model").id == model.id ? "selected":""  %>><%= model.get("name") %></option>
+		<%
+		});
+		%>
+        </select>
+	</fieldset>
+</div>
+</div>
+<div class="row">
+<div class="col-md-6 col-sm-6">
+	<fieldset class="form-group">
+		<label class="form-label semibold" for="supplierid">Choose Supplier Spare belongsTo</label>
+		<select  name="supplierid" class="form-control">
+		<% Suppliers.forEach((supplier)=>{
+		%>
+		 <option value="<%= supplier.id %>" <%= Spare.get("supplier").id == supplier.id ? "selected":""  %>><%= supplier.get("name") %></option>
+		<%
+		});
+		%>
+        </select>
+	</fieldset>
+</div>
+</div>
+<div class="row">
+<div class="col-md-6 col-sm-6">
+	<fieldset class="form-group">
+		<label class="form-label semibold" for="categoryid">Choose  Category</label>
+		<select  name="categoryid" class="form-control">
+		<% Categories.forEach((category)=>{
+		%>
+		 <option value="<%= category.id %>" <%= Spare.get("category").id == category.id ? "selected":""  %>><%= category.get("name") %></option>
+		<%
+		});
+		%>
+        </select>
+	</fieldset>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-6">
+	<fieldset class="form-group">
+		<label class="form-label semibold" for="sparename">spare Name:</label>
+		<input type="text" name="sparename" class="form-control" value="<%= Spare.get("name") %>" id="sparename" placeholder="Enter Spare Name">
+	</fieldset>
+</div>
+<div class="col-lg-6">
+	<fieldset class="form-group">
+		<label class="form-label semibold" for="modelyear">Quality:</label>
+		<select  name="sparequality" class="form-control">
+		<option value="new"  <%= Spare.get("quality") == "new" ? "selected":""  %>>New</option>
+		<option value="used" <%= Spare.get("quality") == "used" ? "selected":""  %>>Used</option>		
+		</select>
+	</fieldset>
+</div>
+</div><!--.row-->
+<div class="row">
+<div class="col-xs-6">
+	<label class="form-label semibold" for="modelpic">Add Quantity</label>
+	<input type="text" name="sparequantity"  value="<%= Spare.get("quantity") %>"  class="form-control" placeholder="Enter Spare Quanity" >
+</div>
+</div><!--.row-->
+<div class="row">
+<div class="col-xs-6">
+	<label class="form-label semibold" for="modelpic">Add Spare part Image</label>
+	<input type="file" name="sparepic" class="form-control" >
+</div>
+</div><!--.row-->
+<div class="row">
+<br>
+<div class="col-lg-6">
+<input type="submit"  name="save" class="btn btn-rounded  btn-primary-outline" value="update Spare"/>
 </div>
 </div>
 </form>
@@ -139,8 +241,8 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 		<td><%= spare.get("quality")  %></td>
 		<td><%= spare.get("quantity")  %></td>
 		<td><%= spare.get("url")  %></td>
-		<td class="table-date"><a href="#">edit</a></td>
-		<td class="table-date"><a href="#">delete</a></td>
+		<td class="table-date"><a href="/spare/edit/<%= spare.id %>?action=edit">edit</a></td>
+		<td class="table-date"><a href="/spare/remove/<%= spare.id %>">delete</a></td>
 		</tr>
 <%
 }) %>
