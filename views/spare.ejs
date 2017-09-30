@@ -85,6 +85,18 @@
 </div><!--.row-->
 <div class="row">
 <div class="col-xs-6">
+	<label class="form-label semibold" for="spareprice">Add Price</label>
+	<input type="text" name="spareprice"  class="form-control" placeholder="Enter Price Quanity" >
+</div>
+</div><!--.row-->
+<div class="row">
+<div class="col-xs-6">
+	<label class="form-label semibold" for="sparewarranty">Add Warranty</label>
+	<input type="text" name="sparewarranty"   class="form-control" placeholder="Enter Warranty Quanity" >
+</div>
+</div><!--.row-->
+<div class="row">
+<div class="col-xs-6">
 	<label class="form-label semibold" for="modelpic">Add Quantity</label>
 	<input type="text" name="sparequantity" class="form-control" placeholder="Enter Spare Quanity" >
 </div>
@@ -187,6 +199,18 @@
 </div><!--.row-->
 <div class="row">
 <div class="col-xs-6">
+	<label class="form-label semibold" for="spareprice">Add Price</label>
+	<input type="text" name="spareprice"  value="<%= Spare.get("price") %>"  class="form-control" placeholder="Enter Price Quanity" >
+</div>
+</div><!--.row-->
+<div class="row">
+<div class="col-xs-6">
+	<label class="form-label semibold" for="sparewarranty">Add Warranty</label>
+	<input type="text" name="sparewarranty"  value="<%= Spare.get("Warranty") %>"  class="form-control" placeholder="Enter Warranty Quanity" >
+</div>
+</div><!--.row-->
+<div class="row">
+<div class="col-xs-6">
 	<label class="form-label semibold" for="modelpic">Add Quantity</label>
 	<input type="text" name="sparequantity"  value="<%= Spare.get("quantity") %>"  class="form-control" placeholder="Enter Spare Quanity" >
 </div>
@@ -224,9 +248,11 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 <th>Supplier</th>
 <th>Quality</th>
 <th>Quantity</th>
+<th>Price</th>
+<th>Warranty</th>
 <th>url</th>
-<th width="120">edit</th>
-<th width="120">delete</th>
+<th>edit</th>
+<th>delete</th>
 </tr>
 </thead>
 <tbody>
@@ -240,9 +266,11 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 		<td><%= spare.get("supplier").get("name") %></td>
 		<td><%= spare.get("quality")  %></td>
 		<td><%= spare.get("quantity")  %></td>
+		<td><%= spare.get("price")  %></td>
+		<td><%= spare.get("warranty")  %></td>
 		<td><img src="/<%= spare.get("url") %>" width="100" height="100" /></td>
-		<td class="table-date"><a href="/spare/edit/<%= spare.id %>?action=edit">edit</a></td>
-		<td class="table-date"><a href="/spare/remove/<%= spare.id %>">delete</a></td>
+		<td><a href="/spare/edit/<%= spare.id %>?action=edit">edit</a></td>
+		<td><a href="/spare/remove/<%= spare.id %>">delete</a></td>
 		</tr>
 <%
 }) %>

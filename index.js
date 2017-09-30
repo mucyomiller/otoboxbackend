@@ -412,6 +412,8 @@ app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   mSpare.set("quality", req.body.sparequality);
   mSpare.set("quantity", req.body.sparequantity);
   mSpare.set("url",req.file.path);
+  mSpare.set("price",req.body.spareprice);
+  mSpare.set("warranty",req.body.sparewarranty);
   mSpare.set("supplier", mSupplier);
   mSpare.set("model", mModel);
   mSpare.set("category",mCategory);
@@ -506,6 +508,8 @@ app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
               spare.set("quality", req.body.sparequality);
               spare.set("quantity", req.body.sparequantity);
               spare.set("url",req.file.path);
+              spare.set("price",req.body.spareprice);
+              spare.set("warranty",req.body.sparewarranty);
               spare.set("supplier", mSupplier);
               spare.set("model", mModel);
               spare.set("category",mCategory);
