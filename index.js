@@ -731,6 +731,46 @@ app.post('/category/edit/:id',isLoggedIn,(req,res)=>{
           });
     });
 
+//orders
+//category
+app.get('/order',isLoggedIn,function(req,res){
+  if(req.query.action){
+      res.render('order',{query:req.query.action});
+  }
+  else{
+    var Order = Parse.Object.extend("Order");
+    var query = new Parse.Query(Order);
+    query.find({
+    success: function(Order) {
+      res.render('order',{Orders: Order});
+    },
+    error: function(object, error) {
+    // The object was not retrieved successfully.
+    // error is a Parse.Error with an error code and message.
+    }
+    });
+  }
+});
+
+//order items
+app.get('/order/items/:id',isLoggedIn,(req,res)=>{
+  
+      var Order = Parse.Object.extend("Order");
+      var query = new Parse.Query(Order);
+      query.get(req.params.id, {
+        success: function(order) {
+          // The object was retrieved successfully.
+          res.render('order',{query:req.query.action,Order: order});
+        },
+        error: function(object, error) {
+          // The object was not retrieved successfully.
+          // error is a Parse.Error with an error code and message.
+        }
+      });
+});
+
+
+
 
 
 // There will be a test page available on the /test path of your server url

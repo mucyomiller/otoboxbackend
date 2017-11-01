@@ -1,0 +1,100 @@
+<% include ./partials/header  %>
+<% include ./partials/sidebar  %>
+<div class="page-content">
+<div class="container-fluid">
+<% if(typeof query !== 'undefined' && query == "items") { %>
+<header class="section-header">
+<div class="tbl">
+<div class="tbl-row">
+	<div class="tbl-cell">
+		<h3>Showing single item</h3>
+		<ol class="breadcrumb breadcrumb-simple">
+			<li><a href="/">Dashboard</a></li>
+			<li><a href="/order">Orders</a></li>
+			<li class="active">item</li>
+		</ol>
+	</div>
+</div>
+</div>
+</header>
+<section class="card">
+<header class="card-header card-header-lg">
+Showing items on your order(<span class="label label-custom label-pill label-info"><%= Order.get("items").length %></span>)
+</header>
+<div class="card-block">
+<p class="card-text">
+<div class="row">
+<table id="table-edit" class="table table-bordered table-hover">
+<thead>
+<tr>
+<th width="1">No#</th>
+<th>Name</th>
+<th>Price</th>
+<th>Quantity</th>
+</tr>
+</thead>
+<tbody>
+<% var i=1;Order.get("items").forEach((item)=>{
+	%>
+		<tr>
+		<td><%= i++  %></td>
+		<td><%= item.product.name  %></td>
+		<td><%= item.product.price  %></td>
+		<td><%= item.quantity  %></td>
+		</tr>
+<%
+}) %>
+</tbody>
+</table>
+</div>
+</p>
+</div>
+</section>
+</div><!--.container-fluid-->
+</div><!--.page-content-->
+<% } else { %>
+<section class="card">
+<header class="card-header card-header-lg">
+All Orders(<span class="label label-custom label-pill label-info"><%= Orders.length %></span>)
+</header>
+<div class="card-block">
+<p class="card-text">
+<div class="row">
+<table id="table-edit" class="table table-bordered table-hover">
+<thead>
+<tr>
+<th width="1">No#</th>
+<th>Names</th>
+<th>Phone</th>
+<th>Location</th>
+<th width="120">items</th>
+<th>vat</th>
+<th>Quantity</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+<% var i=1;Orders.forEach((order)=>{
+	%>
+		<tr>
+		<td><%= i++  %></td>
+		<td><%= order.get("names")  %></td>
+		<td><%= order.get("phone")  %></td>
+		<td><%= order.get("location") %></td>
+		<td class="table-date"><a href="/order/items/<%= order.id %>?action=items">items</a></td>
+		<td><%= order.get("vat") %></td>
+		<td><%= order.get("itemcount") %></td>
+		<td><%= order.get("amount") %></td>
+		</tr>
+<%
+}) %>
+</tbody>
+</table>
+</div>
+</p>
+</div>
+</section>
+<% } %>
+</div><!--.container-fluid-->
+</div><!--.page-content-->
+<% include ./partials/footer  %>
