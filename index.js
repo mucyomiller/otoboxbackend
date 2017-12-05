@@ -345,6 +345,128 @@ app.post('/model/edit/:id',isLoggedIn,upload.single('modelpic'),(req,res)=>{
           });
     });
 
+//generations
+app.get('/generation/:id',isLoggedIn,function(req,res){
+  if(req.query.action){
+    var Model = Parse.Object.extend("Model");
+    var mModel = new Model();
+    mModel.id =  req.params.id;
+    var Generation = Parse.Object.extend("Generation");
+    var query = new Parse.Query(Generation);
+    query.equalTo("model",mModel);
+    query.descending("released");
+    query.find({
+    success: function(Generation) {
+      res.render('generation',{query:req.query.action,Generations: Generation,Model: mModel});
+    },
+    error: function(object, error) {
+    // The object was not retrieved successfully.
+    // error is a Parse.Error with an error code and message.
+    }
+    });
+  }
+  else{
+    var Model = Parse.Object.extend("Model");
+    var mModel = new Model();
+    var Generation  = Parse.Object.extend("Generation");
+    mModel.id = req.params.id;    
+    var query = new Parse.Query(Generation);
+    query.equalTo("model",mModel);
+    query.descending("released");
+    query.find({
+    success: function(Generation) {
+      res.render('generation',{Generations: Generation, Model: mModel});
+    },
+    error: function(object, error) {
+    // The object was not retrieved successfully.
+    // error is a Parse.Error with an error code and message.
+    }
+    });
+  }
+});
+
+app.post('/generation/add',isLoggedIn,upload.single('generationpic'),(req,res)=>{
+  var Model = Parse.Object.extend("Model");
+  var mModel = new Model();
+  mModel.id = req.body.modelid;
+  var Generation = Parse.Object.extend("Generation");
+  var mGeneration = new Generation();
+  mGeneration.set("name",req.body.generationname);
+  mGeneration.set("released", req.body.released);
+  mGeneration.set("url",req.file.path);
+  mGeneration.set("model", mModel);
+  mGeneration.save(null, {
+    success: function(mGeneration) {
+      // Execute any logic that should take place after the object is saved.
+      console.info('New object created with objectId: ' + mGeneration.id);
+    },
+    error: function(mGeneration, error) {
+      // Execute any logic that should take place if the save fails.
+      // error is a Parse.Error with an error code and message.
+      console.error('Failed to create new object, with error code: ' + error.message);
+    }
+  });
+  res.redirect('/generation/'+req.body.modelid);
+});
+
+app.get('/generation/remove/:id',isLoggedIn,(req,res)=>{
+  
+    var Generation = Parse.Object.extend("Generation");
+    // Create a new instance of that class.
+    var mGeneration = new Generation();
+    mGeneration.id = req.params.id;
+    mGeneration.destroy({
+      success: function(mGeneration) {
+        // The object was deleted from the Parse Cloud.
+        console.log("Generation object delete it's id is"+mGeneration.id);
+        req.flash('message',req.flash('Successfully deleted'));
+      },
+      error: function(mGeneration, error) {
+        // The delete failed.
+        // error is a Parse.Error with an error code and message.
+        req.flash('message',req.flash('error occured!'));
+      }
+    });
+    res.redirect('back');
+  });  
+
+
+//generation edit
+app.get('/generation/edit/:id',isLoggedIn,(req,res)=>{
+
+if(req.query.action){
+var Generation = Parse.Object.extend("Generation");
+var mGeneration = new Parse.Query(Generation);
+var mCurrentGeneration = mGeneration.get(req.params.id).then((gen)=>{
+  return gen;
+});
+return Promise.all([mCurrentGeneration]).then(([current])=>{
+  // console.log(model);
+  res.render('generation',{query:req.query.action,Generation:current});
+});
+}
+});
+
+app.post('/generation/edit/:id',isLoggedIn,upload.single('generationpic'),(req,res)=>{
+var Generation = Parse.Object.extend("Generation");
+var query = new Parse.Query(Generation);
+query.get(req.params.id, {
+  success: function(generation) {
+    // The object was retrieved successfully.
+    generation.set("name",req.body.generationname);
+    generation.set("released", req.body.released);
+    generation.set("url",req.file.path);
+    // Now let update it
+    generation.save();
+    res.redirect('/generation/'+req.body.modelid);
+  },
+  error: function(object, error) {
+    // The object was not retrieved successfully.
+    // error is a Parse.Error with an error code and message.
+  }
+});
+});
+
 //spares
 app.get('/spare',isLoggedIn,function(req,res){
   if(req.query.action){
