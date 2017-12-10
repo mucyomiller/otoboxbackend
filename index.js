@@ -472,8 +472,8 @@ app.get('/spare',isLoggedIn,function(req,res){
   if(req.query.action){
     var Spare = Parse.Object.extend("Spare");
     var mSpare = new Parse.Query(Spare);
-    var Supplier = Parse.Object.extend("Supplier");
-    var mSupplier = new Parse.Query(Supplier);
+    var Generation = Parse.Object.extend("Generation");
+    var mGeneration = new Parse.Query(Generation);
     var Model = Parse.Object.extend("Model");
     var mModel = new Parse.Query(Model);
     var Category = Parse.Object.extend("Category");
@@ -485,24 +485,24 @@ app.get('/spare',isLoggedIn,function(req,res){
     var myModel = mModel.find().then((Model)=>{
       return Model;
     })
-    var mySupplier = mSupplier.find().then((Supplier)=>{
-      return Supplier;
+    var myGeneration = mGeneration.find().then((Generation)=>{
+      return Generation;
     });
     var myCategory = mCategory.find().then((Category)=>{
       return Category;
     });
     
 
-    return Promise.all([mySpare,myModel,mySupplier,myCategory]).then(([spare,model,supplier,category])=>{
+    return Promise.all([mySpare,myModel,myGeneration,myCategory]).then(([spare,model,generation,category])=>{
       // console.log(model);
-      res.render('spare',{query:req.query.action,Spares: spare,Models:model,Suppliers:supplier,Categories:category});
+      res.render('spare',{query:req.query.action,Spares: spare,Models:model,Generations:generation,Categories:category});
     });
   }
   else{
     var Spare = Parse.Object.extend("Spare");
     var query = new Parse.Query(Spare);
     query.include("model");
-    query.include("supplier");
+    query.include("generation");
     query.include("category");
     query.find({
     success: function(Spare) {
@@ -523,9 +523,9 @@ app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   var Model = Parse.Object.extend("Model");
   var mModel = new Model();
   mModel.id = req.body.modelid;
-  var Supplier = Parse.Object.extend("Supplier");
-  var mSupplier = new Supplier();
-  mSupplier.id = req.body.supplierid;
+  var Generation = Parse.Object.extend("Generation");
+  var mGeneration = new Generation();
+  mGeneration.id = req.body.generationid;
   var Category = Parse.Object.extend("Category");
   var mCategory = new Category();
   mCategory.id = req.body.categoryid;
@@ -536,7 +536,7 @@ app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   mSpare.set("url",req.file.path);
   mSpare.set("price",req.body.spareprice);
   mSpare.set("warranty",req.body.sparewarranty);
-  mSpare.set("supplier", mSupplier);
+  mSpare.set("generation", mGeneration);
   mSpare.set("model", mModel);
   mSpare.set("category",mCategory);
   mSpare.save(null, {
@@ -584,8 +584,8 @@ app.get('/spare/edit/:id',isLoggedIn,(req,res)=>{
       var mCurrentSpare = mSpare.get(req.params.id).then((spare)=>{
         return spare;
       });
-      var Supplier = Parse.Object.extend("Supplier");
-      var mSupplier = new Parse.Query(Supplier);
+      var Generation = Parse.Object.extend("Generation");
+      var mGeneration = new Parse.Query(Generation);
       var Model = Parse.Object.extend("Model");
       var mModel = new Parse.Query(Model);
       var Category = Parse.Object.extend("Category");
@@ -597,15 +597,15 @@ app.get('/spare/edit/:id',isLoggedIn,(req,res)=>{
       var myModel = mModel.find().then((Model)=>{
         return Model;
       })
-      var mySupplier = mSupplier.find().then((Supplier)=>{
-        return Supplier;
+      var myGeneration = mGeneration.find().then((Generation)=>{
+        return Generation;
       });
       var myCategory = mCategory.find().then((Category)=>{
         return Category;
       });
-      return Promise.all([mySpare,myModel,mySupplier,myCategory,mCurrentSpare]).then(([spare,model,supplier,category,current])=>{
+      return Promise.all([mySpare,myModel,myGeneration,myCategory,mCurrentSpare]).then(([spare,model,generation,category,current])=>{
         // console.log(model);
-        res.render('spare',{query:req.query.action,Spares: spare,Models:model,Suppliers:supplier,Categories:category,Spare:current});
+        res.render('spare',{query:req.query.action,Spares: spare,Models:model,Generations:generation,Categories:category,Spare:current});
       });
       }
     });
@@ -619,9 +619,9 @@ app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
               var Model = Parse.Object.extend("Model");
               var mModel = new Model();
               mModel.id = req.body.modelid;
-              var Supplier = Parse.Object.extend("Supplier");
-              var mSupplier = new Supplier();
-              mSupplier.id = req.body.supplierid;
+              var Generation = Parse.Object.extend("Generation");
+              var mGeneration = new Generation();
+              mGeneration.id = req.body.generationid;
               var Category = Parse.Object.extend("Category");
               var mCategory = new Category();
               mCategory.id = req.body.categoryid;
@@ -632,7 +632,7 @@ app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
               spare.set("url",req.file.path);
               spare.set("price",req.body.spareprice);
               spare.set("warranty",req.body.sparewarranty);
-              spare.set("supplier", mSupplier);
+              spare.set("generation", mGeneration);
               spare.set("model", mModel);
               spare.set("category",mCategory);
               // Now let update it

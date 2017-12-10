@@ -39,11 +39,11 @@
 <div class="row">
 <div class="col-md-6 col-sm-6">
 	<fieldset class="form-group">
-		<label class="form-label semibold" for="supplierid">Choose Supplier Spare belongsTo</label>
-		<select  name="supplierid" class="form-control">
-		<% Suppliers.forEach((supplier)=>{
+		<label class="form-label semibold" for="generationid">Choose Generation Spare belongsTo</label>
+		<select  name="generationid" class="form-control">
+		<% Generations.forEach((generation)=>{
 		%>
-		 <option value="<%= supplier.id %>"><%= supplier.get("name") %></option>
+		 <option value="<%= generation.id %>"><%= generation.get("name") %></option>
 		<%
 		});
 		%>
@@ -153,11 +153,11 @@
 <div class="row">
 <div class="col-md-6 col-sm-6">
 	<fieldset class="form-group">
-		<label class="form-label semibold" for="supplierid">Choose Supplier Spare belongsTo</label>
-		<select  name="supplierid" class="form-control">
-		<% Suppliers.forEach((supplier)=>{
+		<label class="form-label semibold" for="generationid">Choose Generation Spare belongsTo</label>
+		<select  name="generationid" class="form-control">
+		<% Generations.forEach((generation)=>{
 		%>
-		 <option value="<%= supplier.id %>" <%= Spare.get("supplier").id == supplier.id ? "selected":""  %>><%= supplier.get("name") %></option>
+		 <option value="<%= generation.id %>" <%= Spare.get("generation").id == generation.id ? "selected":""  %>><%= generation.get("name") %></option>
 		<%
 		});
 		%>
@@ -245,7 +245,7 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 <th>Name</th>
 <th>Category</th>
 <th>Model</th>
-<th>Supplier</th>
+<th>Generation</th>
 <th>Quality</th>
 <th>Quantity</th>
 <th>Price</th>
@@ -263,7 +263,7 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 		<td><%= spare.get("name")  %></td>
 		<td><%= spare.get("category").get("name")  %></td>		
 		<td><%= spare.get("model").get("name")  %></td>
-		<td><%= spare.get("supplier").get("name") %></td>
+		<td><%= spare.get("generation").get("name") %></td>
 		<td><%= spare.get("quality")  %></td>
 		<td><%= spare.get("quantity")  %></td>
 		<td><%= spare.get("price")  %></td>
