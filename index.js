@@ -578,6 +578,8 @@ app.get('/spare/edit/:id',isLoggedIn,(req,res)=>{
     if(req.query.action){
       var Spare = Parse.Object.extend("Spare");
       var mSpare = new Parse.Query(Spare);
+      mSpare.include('generation');
+      mSpare.include('generation.model');
       var mCurrentSpare = mSpare.get(req.params.id).then((spare)=>{
         return spare;
       });

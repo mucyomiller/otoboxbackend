@@ -142,7 +142,7 @@
 		<select  name="modelid" class="form-control">
 		<% Models.forEach((model)=>{
 		%>
-		 <option value="<%= model.id %>" <%= Spare.get("model").id == model.id ? "selected":""  %>><%= model.get("name") %></option>
+		 <option value="<%= model.id %>" <%= Spare.get("generation").get("model").id == model.id ? "selected":""  %>><%= model.get("name") %></option>
 		<%
 		});
 		%>
