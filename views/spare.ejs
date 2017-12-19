@@ -262,13 +262,13 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 		<td><%= i++  %></td>
 		<td><%= spare.get("name")  %></td>
 		<td><%= spare.get("category").get("name")  %></td>		
-		<td><%= spare.get("model").get("name")  %></td>
+		<td><%= spare.get("generation").get("model").get("name")  %></td>
 		<td><%= spare.get("generation").get("name") %></td>
 		<td><%= spare.get("quality")  %></td>
 		<td><%= spare.get("quantity")  %></td>
 		<td><%= spare.get("price")  %></td>
 		<td><%= spare.get("warranty")  %></td>
-		<td><img src="/<%= spare.get("url") %>" width="100" height="100" /></td>
+		<td><a href="/<%= spare.get("url") %>">view image </a></td>
 		<td><a href="/spare/edit/<%= spare.id %>?action=edit">edit</a></td>
 		<td><a href="/spare/remove/<%= spare.id %>">delete</a></td>
 		</tr>

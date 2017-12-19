@@ -252,16 +252,14 @@ app.get('/model',isLoggedIn,function(req,res){
   }
 });
 
-app.post('/model/add',isLoggedIn,upload.single('modelpic'),(req,res)=>{
+app.post('/model/add',isLoggedIn,(req,res)=>{
   var Brand = Parse.Object.extend("Brand");
   // Create a new instance of that class.
-  var mBrand = new Brand();
-  mBrand.id = req.body.brandid;
+  var mBrand = Brand.createWithoutData(req.body.brandid);
+  console.log(JSON.stringify(mBrand.get("name")))
   var Model = Parse.Object.extend("Model");
   var mModel = new Model();
   mModel.set("name",req.body.modelname);
-  mModel.set("released", req.body.modelyear);
-  mModel.set("url",req.file.path);
   mModel.set("parent", mBrand);
   mModel.save(null, {
     success: function(mModel) {
@@ -319,7 +317,7 @@ app.get('/model/edit/:id',isLoggedIn,(req,res)=>{
       }
     });
 
-app.post('/model/edit/:id',isLoggedIn,upload.single('modelpic'),(req,res)=>{
+app.post('/model/edit/:id',isLoggedIn,(req,res)=>{
       
           var Model = Parse.Object.extend("Model");
           var query = new Parse.Query(Model);
@@ -331,8 +329,6 @@ app.post('/model/edit/:id',isLoggedIn,upload.single('modelpic'),(req,res)=>{
               var mBrand = new Brand();
               mBrand.id = req.body.brandid;
               model.set("name",req.body.modelname);
-              model.set("released", req.body.modelyear);
-              model.set("url",req.file.path);
               model.set("parent", mBrand);
               // Now let update it
               model.save();
@@ -854,7 +850,6 @@ app.post('/category/edit/:id',isLoggedIn,(req,res)=>{
     });
 
 //orders
-//category
 app.get('/order',isLoggedIn,function(req,res){
   if(req.query.action){
       res.render('order',{query:req.query.action});

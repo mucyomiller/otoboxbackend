@@ -67,6 +67,7 @@ All Orders(<span class="label label-custom label-pill label-info"><%= Orders.len
 <th>Names</th>
 <th>Phone</th>
 <th>Location</th>
+<th>VIN</th>
 <th width="120">items</th>
 <th>vat</th>
 <th>Quantity</th>
@@ -81,6 +82,7 @@ All Orders(<span class="label label-custom label-pill label-info"><%= Orders.len
 		<td><%= order.get("names")  %></td>
 		<td><%= order.get("phone")  %></td>
 		<td><%= order.get("location") %></td>
+		<td><%= order.get("vin") %></td>
 		<td class="table-date"><a href="/order/items/<%= order.id %>?action=items">items</a></td>
 		<td><%= order.get("vat") %></td>
 		<td><%= order.get("itemcount") %></td>

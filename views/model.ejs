@@ -20,7 +20,7 @@
 
 <div class="box-typical box-typical-padding">
 <h5 class="m-t-lg with-border">Model infos</h5>
-<form action="/model/add" method="post" enctype="multipart/form-data">
+<form action="/model/add" method="post">
 <div class="row">
 <div class="col-md-6 col-sm-6">
 	<fieldset class="form-group">
@@ -42,18 +42,6 @@
 		<label class="form-label semibold" for="modelname">Model Name:</label>
 		<input type="text" name="modelname" class="form-control" id="modelname" placeholder="Enter Model Name">
 	</fieldset>
-</div>
-<div class="col-lg-6">
-	<fieldset class="form-group">
-		<label class="form-label semibold" for="modelyear">Model Year:</label>
-		<input type="text" name="modelyear" class="form-control" id="modelyear" placeholder="Enter Realise Year">
-	</fieldset>
-</div>
-</div><!--.row-->
-<div class="row">
-<div class="col-xs-6">
-	<label class="form-label semibold" for="modelpic">Add Model Picture</label>
-	<input type="file" name="modelpic" class="form-control" >
 </div>
 </div><!--.row-->
 <div class="row">
@@ -83,7 +71,7 @@
 
 <div class="box-typical box-typical-padding">
 <h5 class="m-t-lg with-border">Model infos</h5>
-<form action="/model/edit/<%= Model.id %>" method="post" enctype="multipart/form-data">
+<form action="/model/edit/<%= Model.id %>" method="post">
 <div class="row">
 <div class="col-md-6 col-sm-6">
 	<fieldset class="form-group">
@@ -105,18 +93,6 @@
 		<label class="form-label semibold" for="modelname">Model Name:</label>
 		<input type="text" name="modelname" class="form-control" id="modelname" value="<%= Model.get("name") %>" placeholder="Enter Model Name">
 	</fieldset>
-</div>
-<div class="col-lg-6">
-	<fieldset class="form-group">
-		<label class="form-label semibold" for="modelyear">Model Year:</label>
-		<input type="text" name="modelyear" class="form-control"  value="<%= Model.get("released") %>" id="modelyear" placeholder="Enter Realise Year">
-	</fieldset>
-</div>
-</div><!--.row-->
-<div class="row">
-<div class="col-xs-6">
-	<label class="form-label semibold" for="modelpic">Add Model Picture</label>
-	<input type="file" name="modelpic" class="form-control" >
 </div>
 </div><!--.row-->
 <div class="row">

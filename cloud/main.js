@@ -34,10 +34,10 @@ Parse.Cloud.afterDelete("Model", function(request) {
   });
 });
 
-//cleanup whenever you delete supplier
-Parse.Cloud.afterDelete("Supplier", function(request) {
+//cleanup whenever you delete generation
+Parse.Cloud.afterDelete("Generation", function(request) {
   var query = new Parse.Query("Spare");
-  query.equalTo("supplier", request.object);
+  query.equalTo("generation", request.object);
 
   query.find().then(function(spares) {
     return Parse.Object.destroyAll(spares);
