@@ -499,6 +499,7 @@ app.get('/spare',isLoggedIn,function(req,res){
     var query = new Parse.Query(Spare);
     query.include("model");
     query.include("generation");
+    query.include("generation.model");
     query.include("category");
     query.find({
     success: function(Spare) {
