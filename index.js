@@ -536,6 +536,7 @@ app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   mSpare.set("generation", mGeneration);
   mSpare.set("model", mModel);
   mSpare.set("category",mCategory);
+  mSpare.set("description", req.body.sparedesc);
   mSpare.save(null, {
     success: function(mSpare) {
       // Execute any logic that should take place after the object is saved.
@@ -634,6 +635,7 @@ app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
               spare.set("generation", mGeneration);
               spare.set("model", mModel);
               spare.set("category",mCategory);
+              spare.set("description",req.body.sparedesc);
               // Now let update it
               spare.save();
               res.redirect('/spare');
