@@ -209,7 +209,9 @@ app.post('/brand/edit/:id',isLoggedIn,upload.single('brandpic'),(req,res)=>{
               // The object was retrieved successfully.
               // Now let update it
               brand.set("name", req.body.brandname);
-              brand.set("url", req.file.path);
+              if(req.file  !== undefined){
+                brand.set("url", req.file.path);
+              }
               brand.save();
               res.redirect('/brand');
             },
@@ -451,7 +453,9 @@ query.get(req.params.id, {
     // The object was retrieved successfully.
     generation.set("name",req.body.generationname);
     generation.set("released", req.body.released);
-    generation.set("url",req.file.path);
+    if (req.file !== undefined) {
+      generation.set("url",req.file.path);
+      }
     // Now let update it
     generation.save();
     res.redirect('/generation/'+req.body.modelid);
@@ -629,7 +633,9 @@ app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
               spare.set("name",req.body.sparename);
               spare.set("quality", req.body.sparequality);
               spare.set("quantity", req.body.sparequantity);
-              spare.set("url",req.file.path);
+              if(req.file  !== undefined){
+                spare.set("url",req.file.path);  
+              }
               spare.set("price",req.body.spareprice);
               spare.set("warranty",req.body.sparewarranty);
               spare.set("generation", mGeneration);
