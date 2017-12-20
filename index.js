@@ -15,6 +15,7 @@ var cookieParser = require('cookie-parser');
 var session      = require('express-session');
 var moment = require('moment');
 var ejs = require('ejs');
+const formatCurrency = require('format-currency');
 
 var configDB = require('./config/database.js')
 
@@ -59,6 +60,13 @@ var app = express();
 //creating  fromnow function
 app.locals.fromNow = function(date){
   return moment(date).fromNow();
+}
+//creating format_currency function
+// include the currency code 'USD' 
+let opts = { format: '%v %c', code: 'RWF' }
+
+app.locals.format_currency = function(money){
+  return formatCurrency(money, opts);
 }
 //setting template engine
 app.set('view engine','ejs');

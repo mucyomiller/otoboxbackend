@@ -296,7 +296,7 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 		<td><%= spare.get("generation").get("name") %></td>
 		<td><%= spare.get("quality")  %></td>
 		<td><%= spare.get("quantity")  %></td>
-		<td><%= spare.get("price").toLocaleString()  %></td>
+		<td><%= format_currency(spare.get("price"))  %></td>
 		<td><%= spare.get("warranty")  %></td>
 		<td><%= spare.get("description")  %></td>
 		<td><a href="/<%= spare.get("url") %>">view image </a></td>
