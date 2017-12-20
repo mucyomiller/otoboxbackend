@@ -72,6 +72,7 @@ All Orders(<span class="label label-custom label-pill label-info"><%= Orders.len
 <th>vat</th>
 <th>Quantity</th>
 <th>Amount</th>
+<th width="120">Date</th>
 </tr>
 </thead>
 <tbody>
@@ -87,6 +88,7 @@ All Orders(<span class="label label-custom label-pill label-info"><%= Orders.len
 		<td><%= order.get("vat") %></td>
 		<td><%= order.get("itemcount") %></td>
 		<td><%= order.get("amount") %></td>
+		<td><%= fromNow(order.createdAt) %></td>
 		</tr>
 <%
 }) %>
