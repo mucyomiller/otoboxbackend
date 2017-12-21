@@ -85,9 +85,9 @@ All Orders(<span class="label label-custom label-pill label-info"><%= Orders.len
 		<td><%= order.get("location") %></td>
 		<td><%= order.get("vin") %></td>
 		<td class="table-date"><a href="/order/items/<%= order.id %>?action=items">items</a></td>
-		<td><%= order.get("vat") %></td>
+		<td><%= format_currency(order.get("vat")) %></td>
 		<td><%= order.get("itemcount") %></td>
-		<td><%= order.get("amount") %></td>
+		<td><%= format_currency(order.get("amount")) %></td>
 		<td><%= fromNow(order.createdAt) %></td>
 		</tr>
 <%
