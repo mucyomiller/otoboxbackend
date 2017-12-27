@@ -130,7 +130,7 @@ app.get('/brand',isLoggedIn,function(req,res){
   else{
     var Brand = Parse.Object.extend("Brand");
     var query = new Parse.Query(Brand);
-    query.descending("name");
+    query.ascending("name");
     query.find({
     success: function(Brand) {
     // The object was retrieved successfully.
@@ -237,7 +237,7 @@ app.get('/model',isLoggedIn,function(req,res){
   if(req.query.action){
     var Brand = Parse.Object.extend("Brand");
     var query = new Parse.Query(Brand);
-    query.descending("name");
+    query.ascending("name");
     query.find({
     success: function(Brand) {
       res.render('model',{query:req.query.action,Brands: Brand});
