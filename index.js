@@ -876,7 +876,7 @@ app.get('/order',isLoggedIn,function(req,res){
   else{
     var Order = Parse.Object.extend("Order");
     var query = new Parse.Query(Order);
-    query.ascending("createdAt");
+    query.descending("createdAt");
     query.find({
     success: function(Order) {
       res.render('order',{Orders: Order});
