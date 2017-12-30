@@ -622,14 +622,11 @@ app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
             success: function(spare) {
               // The object was retrieved successfully.
               var Model = Parse.Object.extend("Model");
-              var mModel = new Model();
-              mModel.id = req.body.modelid;
+              var mModel = Model.createWithoutData(req.body.modelid);
               var Generation = Parse.Object.extend("Generation");
-              var mGeneration = new Generation();
-              mGeneration.id = req.body.generationid;
+              var mGeneration = Generation.createWithoutData(req.body.generationid);
               var Category = Parse.Object.extend("Category");
-              var mCategory = new Category();
-              mCategory.id = req.body.categoryid;
+              var mCategory = Category.createWithoutData(req.body.categoryid);
             
               spare.set("name",req.body.sparename);
               spare.set("quality", req.body.sparequality);
@@ -639,8 +636,19 @@ app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
               }
               spare.set("price",req.body.spareprice);
               spare.set("warranty",req.body.sparewarranty);
-              spare.set("generation", mGeneration);
-              spare.set("model", mModel);
+              //check if generation&model is available and set it
+              if(req.body.generationid  !== undefined){
+                spare.set("generation", mGeneration);
+              }else
+              {
+                spare.set("generation",null);  
+              }
+              if(req.body.modelid !== undefined){
+                spare.set("model", mModel);
+              }else
+              {
+                spare.set("model", null);
+              }
               spare.set("category",mCategory);
               spare.set("description",req.body.sparedesc);
               // Now let update it
@@ -702,8 +710,7 @@ app.get('/supplier/remove/:id',isLoggedIn,(req,res)=>{
 
   var Supplier = Parse.Object.extend("Supplier");
   // Create a new instance of that class.
-  var mSupplier = new Supplier();
-  mSupplier.id = req.params.id;
+  var mSupplier = Supplier.createWithoutData(req.params.id);
   mSupplier.destroy({
     success: function(mSupplier) {
       // The object was deleted from the Parse Cloud.
@@ -806,8 +813,7 @@ app.get('/category/remove/:id',isLoggedIn,(req,res)=>{
   
     var Category = Parse.Object.extend("Category");
     // Create a new instance of that class.
-    var mCategory = new Category();
-    mCategory.id = req.params.id;
+    var mCategory = Category.createWithoutData(req.params.id);
     mCategory.destroy({
       success: function(mCategory) {
         // The object was deleted from the Parse Cloud.
