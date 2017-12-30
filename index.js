@@ -466,7 +466,6 @@ app.get('/spare',isLoggedIn,function(req,res){
   if(req.query.action){
     var Spare = Parse.Object.extend("Spare");
     var mSpare = new Parse.Query(Spare);
-    mSpare.descending("createdAt");
     var Generation = Parse.Object.extend("Generation");
     var mGeneration = new Parse.Query(Generation);
     var Model = Parse.Object.extend("Model");
@@ -496,6 +495,7 @@ app.get('/spare',isLoggedIn,function(req,res){
   else{
     var Spare = Parse.Object.extend("Spare");
     var query = new Parse.Query(Spare);
+    query.descending("createdAt");
     query.include("model");
     query.include("generation");
     query.include("generation.model");
