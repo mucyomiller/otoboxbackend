@@ -234,34 +234,18 @@ app.post('/brand/edit/:id',isLoggedIn,upload.single('brandpic'),(req,res)=>{
 
     
 app.get('/model',isLoggedIn,function(req,res){
-  if(req.query.action){
-    var Brand = Parse.Object.extend("Brand");
-    var query = new Parse.Query(Brand);
-    query.ascending("name");
-    query.find({
-    success: function(Brand) {
-      res.render('model',{query:req.query.action,Brands: Brand});
-    },
-    error: function(object, error) {
-    // The object was not retrieved successfully.
-    // error is a Parse.Error with an error code and message.
-    }
-    });
+  var Model = Parse.Object.extend("Model");
+  var query = new Parse.Query(Model);
+  query.include("parent");
+  query.find({
+  success: function(Model) {
+    res.render('model',{Models: Model});
+  },
+  error: function(object, error) {
+  // The object was not retrieved successfully.
+  // error is a Parse.Error with an error code and message.
   }
-  else{
-    var Model = Parse.Object.extend("Model");
-    var query = new Parse.Query(Model);
-    query.include("parent");
-    query.find({
-    success: function(Model) {
-      res.render('model',{Models: Model});
-    },
-    error: function(object, error) {
-    // The object was not retrieved successfully.
-    // error is a Parse.Error with an error code and message.
-    }
-    });
-  }
+  });
 });
 
 app.post('/model/add',isLoggedIn,(req,res)=>{
@@ -547,8 +531,18 @@ app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   mSpare.set("url",req.file.path);
   mSpare.set("price",req.body.spareprice);
   mSpare.set("warranty",req.body.sparewarranty);
-  mSpare.set("generation", mGeneration);
-  mSpare.set("model", mModel);
+  if(req.body.generationid  !== undefined){
+    mSpare.set("generation",null);  
+  }else
+  {
+    mSpare.set("generation", mGeneration);
+  }
+  if(req.body.generationid  !== undefined){
+    mSpare.set("model", null);
+  }else
+  {
+    mSpare.set("model", mModel);
+  }
   mSpare.set("category",mCategory);
   mSpare.set("description", req.body.sparedesc);
   mSpare.save(null, {
@@ -908,8 +902,45 @@ app.get('/order/items/:id',isLoggedIn,(req,res)=>{
       });
 });
 
+//simple API End Points
 
+//getting generations for specified model id
+app.get('/api/generations/:model_id',(req,res)=>{
+  var Generation = Parse.Object.extend("Generation");
+  var Model = Parse.Object.extend("Model");
+  var query = new Parse.Query(Generation);
+  var model = Model.createWithoutData(req.params.model_id);
+  query.equalTo("model",model);
+  query.include("model");
+  query.include("generation");
+  query.include("generation.model");
+  query.include("category");
+  query.find({
+  success: function(Spare) {
+    res.json(Spare);
+  },
+  error: function(object, error) {
+  // The object was not retrieved successfully.
+  // error is a Parse.Error with an error code and message.
+  }
+  }); 
+});
 
+//getting models
+app.get('/api/models',function(req,res){
+  var Model = Parse.Object.extend("Model");
+  var query = new Parse.Query(Model);
+  query.include("parent");
+  query.find({
+  success: function(Model) {
+    res.json(Model);
+  },
+  error: function(object, error) {
+  // The object was not retrieved successfully.
+  // error is a Parse.Error with an error code and message.
+  }
+  });
+});
 
 
 // There will be a test page available on the /test path of your server url
