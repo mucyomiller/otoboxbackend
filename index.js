@@ -516,14 +516,11 @@ app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   var mSpare = new Spare();
 
   var Model = Parse.Object.extend("Model");
-  var mModel = new Model();
-  mModel.id = req.body.modelid;
+  var mModel =Model.createWithoutData(req.body.modelid);
   var Generation = Parse.Object.extend("Generation");
-  var mGeneration = new Generation();
-  mGeneration.id = req.body.generationid;
+  var mGeneration =Generation.createWithoutData(req.body.generationid);
   var Category = Parse.Object.extend("Category");
-  var mCategory = new Category();
-  mCategory.id = req.body.categoryid;
+  var mCategory = Category.createWithoutData(req.body.categoryid);
 
   mSpare.set("name",req.body.sparename);
   mSpare.set("quality", req.body.sparequality);
