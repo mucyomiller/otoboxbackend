@@ -146,10 +146,17 @@
 	<fieldset class="form-group">
 		<label class="form-label semibold" for="modelid">Choose Model Spare belongsTo</label>
 		<select  name="modelid" class="form-control">
+		<option value="">None</option>
 		<% Models.forEach((model)=>{
+			if(Spare.get("generation")){
 		%>
 		 <option value="<%= model.id %>" <%= Spare.get("generation").get("model").id == model.id ? "selected":""  %>><%= model.get("name") %></option>
 		<%
+		}else
+		{ %>
+			<option value="<%= model.id %>"><%= model.get("name") %></option>
+		<%
+		}
 		});
 		%>
         </select>
@@ -161,10 +168,17 @@
 	<fieldset class="form-group">
 		<label class="form-label semibold" for="generationid">Choose Generation Spare belongsTo</label>
 		<select  name="generationid" class="form-control">
+		<option value="">None</option>
 		<% Generations.forEach((generation)=>{
+			if(Spare.get("generation")){
 		%>
 		 <option value="<%= generation.id %>" <%= Spare.get("generation").id == generation.id ? "selected":""  %>><%= generation.get("name") %></option>
 		<%
+		}else
+		{ %>
+		 <option value="<%= generation.id %>"><%= generation.get("name") %></option>
+		<%
+		}
 		});
 		%>
         </select>
