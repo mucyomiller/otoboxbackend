@@ -20,18 +20,14 @@
 
 <div class="box-typical box-typical-padding">
 <h5 class="m-t-lg with-border">Spare Parts Infos</h5>
-<form action="/spare/add" method="post" enctype="multipart/form-data">
+<form action="/spare/add" method="post" enctype="multipart/form-data" id="app">
 <div class="row">
 <div class="col-md-6 col-sm-6">
 	<fieldset class="form-group">
 		<label class="form-label semibold" for="modelid">Choose Model Spare belongsTo</label>
-		<select  name="modelid" class="form-control">
-		<% Models.forEach((model)=>{
-		%>
-		 <option value="<%= model.id %>"><%= model.get("name") %></option>
-		<%
-		});
-		%>
+		<select  name="modelid" class="form-control" v-model="model_id" @change="fetchGeneration()">
+			<option value="">None</option>
+			<option v-for="model in models" v-bind:value="model.objectId">{{ model.name }}</option>
         </select>
 	</fieldset>
 </div>
@@ -40,13 +36,9 @@
 <div class="col-md-6 col-sm-6">
 	<fieldset class="form-group">
 		<label class="form-label semibold" for="generationid">Choose Generation Spare belongsTo</label>
-		<select  name="generationid" class="form-control">
-		<% Generations.forEach((generation)=>{
-		%>
-		 <option value="<%= generation.id %>"><%= generation.get("name") %></option>
-		<%
-		});
-		%>
+		<select  name="generationid" class="form-control" v-model="generation_id">
+				<option value="">None</option>
+				<option v-for="generation in generations" v-bind:value="generation.objectId">{{ generation.name }}</option>
         </select>
 	</fieldset>
 </div>
@@ -314,4 +306,27 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 <% } %>
 </div><!--.container-fluid-->
 </div><!--.page-content-->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+new Vue({
+	el:'#app',
+	data:{
+		models :[],
+		model_id:'',
+		generations :[],
+		generation_id:'',
+	},
+	methods:{
+		fetchGeneration(){
+			axios.get('/api/generations/'+this.model_id).then(response => this.generations = response.data);
+		}
+	}
+	,
+	mounted(){
+		axios.get('/api/models/').then(response => this.models = response.data);
+	}
+
+})
+</script>	
 <% include ./partials/footer  %>
