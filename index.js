@@ -17,7 +17,8 @@ var moment = require('moment');
 var ejs = require('ejs');
 const formatCurrency = require('format-currency');
 
-var configDB = require('./config/database.js')
+var configDB = require('./config/database.js');
+var redis   = require('redis');
 
 
 //multer configs
@@ -955,6 +956,13 @@ app.get('/api/models',function(req,res){
 
 var port = process.env.PORT || 1337;
 var httpServer = require('http').createServer(app);
+var io = require('socket.io')(httpServer);
+//setting up WebSocket Connection
+io.on('connection',(socket)=>{
+  console.log('A Socket Connection Now Open!');
+  console.log(socket);
+});
+
 httpServer.listen(port, function() {
     console.log('otobox backend is running on port ' + port + '.');
 });
