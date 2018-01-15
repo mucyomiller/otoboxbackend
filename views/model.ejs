@@ -128,7 +128,17 @@ All Models(<span class="label label-custom label-pill label-info"><%= Models.len
 		<tr>
 		<td><%= model.get("name")  %></td>
 		<td><a href="/generation/<%= model.id %>">Archive</a></td>
+		<% if(model.get("parent")){
+		%>
 		<td><%= model.get("parent").get("name")  %></td>
+		<%
+		}else
+		{
+		%>
+		<td></td>
+		<%
+		} 
+		%>
 		<td class="table-date"><a href="/model/edit/<%= model.id %>?action=edit">edit</a></td>
 		<td class="table-date"><a href="/model/remove/<%= model.id %>">delete</a></td>
 		</tr>
