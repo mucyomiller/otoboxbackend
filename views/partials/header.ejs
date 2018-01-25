@@ -38,22 +38,23 @@
 <div class="site-header-content-in">
 <div class="site-header-shown">
 <div class="dropdown dropdown-notification notif">
-<a href="#" class="header-alarm dropdown-toggle active" id="dd-notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<a href="#" class="header-alarm dropdown-toggle" v-bind:class="{ active: counts }" id="dd-notification" data-toggle="dropdown">
 <i class="font-icon-alarm"></i>
 </a>
 <div class="dropdown-menu dropdown-menu-right dropdown-menu-notif" aria-labelledby="dd-notification">
 <div class="dropdown-menu-notif-header">
 Notifications
-<span class="label label-pill label-danger">1</span>
+<span class="label label-pill label-danger" v-if="counts" >{{ counts}}</span>
 </div>
 <div class="dropdown-menu-notif-list">
-<div class="dropdown-menu-notif-item">
+
+<div class="dropdown-menu-notif-item" v-for="notification in notifications.slice(0, 5)">
 <div class="photo">
 <img src="/public/dashboard/img/avatar-2-64.png" alt="">
 </div>
 <div class="dot"></div>
-<a href="#">User</a> welcome to otobox 
-<div class="color-blue-grey-lighter">5 min</div>
+<a href="#">{{notification.from}}</a> {{notification.amounts}} 
+<div class="color-blue-grey-lighter"></div>
 </div>
 </div>
 <div class="dropdown-menu-notif-more">
