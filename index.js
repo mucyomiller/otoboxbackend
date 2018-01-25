@@ -255,6 +255,7 @@ app.get('/model',isLoggedIn,function(req,res){
   else{
   var Model = Parse.Object.extend("Model");
   var query = new Parse.Query(Model);
+  query.ascending("name");
   query.include("parent");
   query.find({
   success: function(Model) {
