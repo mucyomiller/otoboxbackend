@@ -21,6 +21,18 @@
 <div class="box-typical box-typical-padding">
 <h5 class="m-t-lg with-border">Spare Parts Infos</h5>
 <form action="/spare/add" method="post" enctype="multipart/form-data" id="app">
+
+<div class="row">
+	<div class="col-md-6 col-sm-6">
+		<fieldset class="form-group">
+			<label class="form-label semibold" for="brandid">Choose Brand Spare belongsTo</label>
+			<select  name="brandid" class="form-control" v-model="brand_id" @change="fetchModels()">
+				<option value="">None</option>
+				<option v-for="brand in brands" v-bind:value="brand.objectId">{{ brand.name }}</option>
+			</select>
+		</fieldset>
+	</div>
+	</div>
 <div class="row">
 <div class="col-md-6 col-sm-6">
 	<fieldset class="form-group">
@@ -338,6 +350,8 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 new Vue({
 	el:'#app',
 	data:{
+		brands :[],
+		brand_id:'',
 		models :[],
 		model_id:'',
 		generations :[],
@@ -346,11 +360,14 @@ new Vue({
 	methods:{
 		fetchGeneration(){
 			axios.get('/api/generations/'+this.model_id).then(response => this.generations = response.data);
+		},
+		fetchModels(){
+			axios.get('/api/models/'+this.brand_id).then(response => this.models = response.data);
 		}
 	}
 	,
 	mounted(){
-		axios.get('/api/models/').then(response => this.models = response.data);
+		axios.get('/api/brands/').then(response => this.brands = response.data);
 	}
 
 })
