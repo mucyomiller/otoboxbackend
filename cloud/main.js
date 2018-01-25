@@ -1,7 +1,9 @@
+var redis   = require('redis');
+var rclient = redis.createClient(process.env.REDIS_PORT,process.env.REDIS_HOST);
 
-Parse.Cloud.define('hello', function(req, res) {
-  res.success('Hi');
-});
+// Parse.Cloud.define('hello', function(req, res) {
+//   res.success('Hi');
+// });
 
 //cleanup whenever to delete Brand 
 Parse.Cloud.afterDelete("Brand", function(request) {
@@ -64,4 +66,25 @@ Parse.Cloud.afterDelete("Category", function(request) {
   });
 });
 
-
+Parse.Cloud.afterSave("Order", function(request) {
+  var Order = Parse.Object.extend("Order");
+  // Create a new instance of that class.
+  //var mOrder = Order.createWithoutData(request.object.id);
+  // console.log(JSON.stringify(request.object));
+  // console.log("object Id =>"+request.object.id);
+  // console.log(request.object.get("names"));
+  let notifications = {
+    orderId : request.object.id,
+    from : request.object.get('names'),
+    phone : request.object.get('phone'),
+    amounts: request.object.get('amount'),
+    createdAt: request.object.createdAt
+  }
+  console.log(JSON.stringify(notifications));
+  rclient.multi()
+  .lpush("recent-notifications",JSON.stringify(notifications))
+  .ltrim("recent-notifications", 0, 99)
+  .incr("notifications")
+  .publish("otobox:notifications",JSON.stringify(notifications))
+  .exec();
+});
