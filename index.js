@@ -239,6 +239,20 @@ app.post('/brand/edit/:id',isLoggedIn,upload.single('brandpic'),(req,res)=>{
 
     
 app.get('/model',isLoggedIn,function(req,res){
+  if(req.query.action){
+    var Brand = Parse.Object.extend("Brand");
+    var query = new Parse.Query(Brand);
+    query.find({
+    success: function(Brand) {
+      res.render('model',{query:req.query.action,Brands: Brand});
+    },
+    error: function(object, error) {
+    // The object was not retrieved successfully.
+    // error is a Parse.Error with an error code and message.
+    }
+    });
+  }
+  else{
   var Model = Parse.Object.extend("Model");
   var query = new Parse.Query(Model);
   query.include("parent");
@@ -251,6 +265,7 @@ app.get('/model',isLoggedIn,function(req,res){
   // error is a Parse.Error with an error code and message.
   }
   });
+  }
 });
 
 app.post('/model/add',isLoggedIn,(req,res)=>{
