@@ -1,0 +1,52 @@
+<% include ./partials/header  %>
+<% include ./partials/sidebar  %>
+<div class="page-content" id="notificationpage">
+<div class="container-fluid">
+<section class="card">
+<header class="card-header card-header-lg">
+All Notifications<span class="label label-custom label-pill label-danger">{{counts}}</span>
+</header>
+<div class="card-block">
+<p class="card-text">
+<div class="row">
+<table id="table-edit" class="table table-bordered table-hover">
+<thead>
+<tr>
+<th>title</th>
+<th>more</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="notification in notifications">
+<td>{{notification.from}}</td>
+<td class="table-date"><a href="#">view</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</p>
+</div>
+</section>
+</div><!--.container-fluid-->
+</div><!--.page-content-->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+new Vue({
+	el:'#notificationpage',
+    data:{
+	    channel: "",
+        msg: "",
+        counts: 0,
+        notifications: []
+	},
+	mounted(){
+		axios.get('/api/notifications/').then((response) => {
+            this.counts = response.data.counts;
+            this.notifications = JSON.parse(response.data.notifications);
+        });
+	}
+
+})
+</script>	
+<% include ./partials/footer  %>
