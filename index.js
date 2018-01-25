@@ -20,6 +20,13 @@ const formatCurrency = require('format-currency');
 var configDB = require('./config/database.js');
 var redis   = require('redis');
 
+var rclient = redis.createClient(process.env.REDIS_PORT,process.env.REDIS_HOST);
+r2client = rclient.duplicate();
+rclient.subscribe("otobox:notifications",(err,reply)=>{
+  if(!err){
+    console.log("parse server connected to redis server!");
+  }
+});
 
 //multer configs
 var storage = multer.diskStorage({
@@ -112,9 +119,6 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 // Serve the Parse API on the /parse URL prefix
 var mountPath = process.env.PARSE_MOUNT || '/parse';
 app.use(mountPath, api);
-
-
-//DB Schema
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/',isLoggedIn, function(req, res) {
@@ -907,6 +911,11 @@ app.get('/order/items/:id',isLoggedIn,(req,res)=>{
       });
 });
 
+//notifications
+app.get('/notifications',isLoggedIn,(req,res)=>{
+  res.render('notifications');
+});
+
 //simple API End Points
 
 //getting generations for specified model id
@@ -930,11 +939,14 @@ app.get('/api/generations/:model_id',(req,res)=>{
   }
   }); 
 });
-
 //getting models
-app.get('/api/models',function(req,res){
+app.get('/api/models/:brand_id',function(req,res){
+  var Brand = Parse.Object.extend("Brand");
   var Model = Parse.Object.extend("Model");
+  var brand = Brand.createWithoutData(req.params.brand_id);
+
   var query = new Parse.Query(Model);
+  query.equalTo("parent",brand);
   query.include("parent");
   query.find({
   success: function(Model) {
@@ -948,6 +960,21 @@ app.get('/api/models',function(req,res){
 });
 
 
+//getting brands
+app.get('/api/brands',function(req,res){
+  var Brand = Parse.Object.extend("Brand");
+  var query = new Parse.Query(Brand);
+  query.find({
+  success: function(Brand) {
+    res.json(Brand);
+  },
+  error: function(object, error) {
+  // The object was not retrieved successfully.
+  // error is a Parse.Error with an error code and message.
+  }
+  });
+});
+
 // There will be a test page available on the /test path of your server url
 // Remove this before launching your app
 // app.get('/test', function(req, res) {
@@ -960,7 +987,56 @@ var io = require('socket.io')(httpServer);
 //setting up WebSocket Connection
 io.on('connection',(socket)=>{
   console.log('A Socket Connection Now Open!');
-  console.log(socket);
+  // console.log(socket);
+  rclient.on("message",(channel,message)=>{
+    //getting total notifications & array containing notifications & last notification
+    let notifications = 0;
+    let notificationsArr = [];
+    r2client.multi()
+    .get("notifications",function(err,reply){
+      if(reply){
+        // console.log("let me see => "+reply);
+        notifications = reply; 
+      }
+    })
+    .lrange("recent-notifications", 0, -1, function(err, reply) {
+      if(reply){
+        // console.log("before push show me wt u got! =>"+reply);
+        notificationsArr = reply;
+      }
+    }).exec(()=>{
+      socket.emit('from-server',{
+        channel: channel,
+        message: JSON.parse(message),
+        counts: notifications,
+        notifications: notificationsArr
+        });
+    });
+  });
+});
+//endpoints to retrieve notifcations datas on notification page
+app.get('/api/notifications',function(req,res){
+      //getting total notifications & array containing notifications & last notification
+      let notifications = 0;
+      let notificationsArr = [];
+      r2client.multi()
+      .get("notifications",function(err,reply){
+        if(reply){
+          // console.log("let me see => "+reply);
+          notifications = reply; 
+        }
+      })
+      .lrange("recent-notifications", 0, -1, function(err, reply) {
+        if(reply){
+          // console.log("before push show me wt u got! =>"+reply);
+          notificationsArr = reply;
+        }
+      }).exec(()=>{
+        res.json({
+          counts: notifications,
+          notifications: notificationsArr
+          });
+      });
 });
 
 httpServer.listen(port, function() {
