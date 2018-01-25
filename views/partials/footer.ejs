@@ -1,4 +1,34 @@
 <script src="/socket.io/socket.io.js "></script>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vuex/3.0.1/vuex.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    var socket = io();
+    new Vue({
+	el:'.container-fluid',
+	data:{
+	    channel: "",
+        msg: "",
+        counts: 0,
+        notifications: []
+	},
+	methods:{
+        moment: function(date){
+            return moment(date).fromNow();
+        }
+    }
+    ,
+	mounted(){
+        socket.on('from-server',(message)=>{
+        this.channel = message.channel,
+        this.msg = message.message,
+        this.counts = message.counts,
+        this.notifications = message.notifications
+        console.log(JSON.stringify(message));
+    });
+	}
+}) 
+</script>
 <script src="/public/dashboard/js/lib/jquery/jquery.min.js"></script>
 <script src="/public/dashboard/js/lib/jScrollPane/jquery.jscrollpane.min.js"></script>
 <script src="/public/dashboard/js/lib/jScrollPane/jquery.mousewheel.js"></script>
