@@ -311,7 +311,7 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 	<td><%= spare.get("name")  %></td>
 	<td><%= spare.get("category").get("name")  %></td>		
 	<td>
-		<% if(spare.get("generation").get("model")){ %>
+		<% if(spare && spare.get("generation") && spare.get("generation").get("model")){ %>
 		<%=	spare.get("generation").get("model").get("name") %>
 		<% }else{ %>
 			<b>None</b>
