@@ -1,6 +1,6 @@
 <% include ./partials/header  %>
 <% include ./partials/sidebar  %>
-<div class="page-content" id="notificationpage">
+<div class="page-content">
 <div class="container-fluid">
 <section class="card">
 <header class="card-header card-header-lg">
@@ -29,24 +29,4 @@ All Notifications<span class="label label-custom label-pill label-danger">{{coun
 </section>
 </div><!--.container-fluid-->
 </div><!--.page-content-->
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script>
-new Vue({
-	el:'#notificationpage',
-    data:{
-	    channel: "",
-        msg: "",
-        counts: 0,
-        notifications: []
-	},
-	mounted(){
-		axios.get('/api/notifications/').then((response) => {
-            this.counts = response.data.counts;
-            this.notifications = JSON.parse(response.data.notifications);
-        });
-	}
-
-})
-</script>	
 <% include ./partials/footer  %>
