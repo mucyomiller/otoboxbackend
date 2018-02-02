@@ -19,7 +19,7 @@ All Notifications<span class="label label-custom label-pill label-danger">{{coun
 <tbody>
 <tr v-for="notification in notifications">
 <td>{{notification.from}}</td>
-<td class="table-date"><a href="#">view</a></td>
+<td class="table-date"><a :href="'/order/items/'+notification.orderId+'?action=items'" @click="viewed(notification)">view</a></td>
 </tr>
 </tbody>
 </table>

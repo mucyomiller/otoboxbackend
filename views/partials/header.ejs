@@ -54,12 +54,12 @@ Notifications
 <img src="/public/dashboard/img/avatar-2-64.png" alt="">
 </div>
 <div class="dot"></div>
-<a href="#">{{notification.from}}</a> {{notification.amounts}} 
+<a :href="'/order/items/'+notification.orderId+'?action=items'" @click="viewed(notification)">{{notification.from}}</a> {{notification.amounts}} 
 <div class="color-blue-grey-lighter"></div>
 </div>
 </div>
 <div class="dropdown-menu-notif-more">
-<a href="#">See more</a>
+<a href="/notifications">See more</a>
 </div>
 </div>
 </div>

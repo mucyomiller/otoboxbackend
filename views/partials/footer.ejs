@@ -17,6 +17,9 @@
 	methods:{
         moment: function(date){
             return moment(date).fromNow();
+        },
+        viewed: function(order){
+            socket.emit('from-client',order);
         }
     }
     ,
