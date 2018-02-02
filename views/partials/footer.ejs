@@ -1,14 +1,19 @@
+<!-- add notification sound -->
+<div id="sound"></div>
 </div> 
 <!-- end of container-fluid div (VueApp) -->
 <script src="/socket.io/socket.io.js "></script>
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vuex/3.0.1/vuex.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="/public/assets/js/cookie.min.js"></script>
 <script>
     var socket = io();
     new Vue({
 	el:'#VueApp',
 	data:{
+        isActive: false,
+        isChecked: cookie.get("notificationSound",true) == "true",
 	    channel: "",
         msg: "",
         counts: 0,
@@ -20,9 +25,29 @@
         },
         viewed: function(order){
             socket.emit('from-client',order);
+        },
+        playSound: function playSound(filename){   
+            document.getElementById("sound").innerHTML='<audio autoplay="autoplay"><source src="/public/assets/audio/' + filename + '.mp3" type="audio/mpeg" /><source src="/public/assets/audio/' + filename + '.ogg" type="audio/ogg" /><embed hidden="true" autostart="true" loop="false" src="/public/assets/audio/' + filename +'.mp3" /></audio>';
         }
-    }
-    ,
+    },
+    watch: {
+        counts: function () {
+            if(this.counts>0){
+                this.isActive = true;
+            }else
+            {
+                this.isActive = false;
+            }
+        },
+        isChecked: function(){
+            if(this.isChecked){
+                cookie.set('notificationSound', true);
+            }else
+            {
+                cookie.set('notificationSound', false);
+            }
+        }
+    },
 	mounted(){
         axios.get('/api/notifications/').then((response) => {
             this.counts = response.data.counts;
@@ -33,6 +58,9 @@
         this.msg = message.message,
         this.counts = message.counts,
         this.notifications = message.notifications.map(JSON.parse)
+        if(this.isChecked){
+            this.playSound('notify');
+        }
         console.log(JSON.stringify(message));
     });
 	}

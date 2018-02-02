@@ -18,6 +18,10 @@
 <link rel="stylesheet" href="/public/dashboard/css/lib/font-awesome/font-awesome.min.css">
 <link rel="stylesheet" href="/public/dashboard/css/lib/bootstrap/bootstrap.min.css">
 <link rel="stylesheet" href="/public/dashboard/css/main.css">
+<!-- hide mustache until Vue finish to load-->
+<style type="text/css">
+[v-cloak] {display: none}
+</style>
  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
 </head>
@@ -39,17 +43,21 @@
 <div class="site-header-content-in">
 <div class="site-header-shown">
 <div class="dropdown dropdown-notification notif">
-<a href="#" class="header-alarm dropdown-toggle" v-bind:class="{ active: counts }" id="dd-notification" data-toggle="dropdown">
+<a href="#" class="header-alarm dropdown-toggle" v-bind:class="{ active: isActive }" id="dd-notification" data-toggle="dropdown">
 <i class="font-icon-alarm"></i>
 </a>
 <div class="dropdown-menu dropdown-menu-right dropdown-menu-notif" aria-labelledby="dd-notification">
 <div class="dropdown-menu-notif-header">
 Notifications
-<span class="label label-pill label-danger" v-if="counts" >{{ counts}}</span>
+<span class="label label-pill label-danger" v-cloak v-if="isActive" >{{ counts}}</span>
+<div class="checkbox-toggle pull-right">
+    <input type="checkbox" id="check-toggle" v-model="isChecked">
+    <label for="check-toggle">sound</label>
+</div>
 </div>
 <div class="dropdown-menu-notif-list">
 
-<div class="dropdown-menu-notif-item" v-for="notification in notifications.slice(0, 5)">
+<div class="dropdown-menu-notif-item" v-cloak v-for="notification in notifications.slice(0, 5)">
 <div class="photo">
 <img src="/public/dashboard/img/avatar-2-64.png" alt="">
 </div>
