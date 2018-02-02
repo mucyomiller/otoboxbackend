@@ -1032,9 +1032,12 @@ io.on('connection',(socket)=>{
   socket.on('from-client',(DeletedOrder)=>{
       //stringify it to equal to the format stored in redis
       let content = JSON.stringify(DeletedOrder);
-      r2client.lrem("recent-notifications",0,content,function(){
+      r2client.multi()
+      .lrem("recent-notifications",0,content,function(){
       console.log("User Viewed => "+content);
-    });
+      })
+      .decr("notifications")
+      .exec();
   });
 });
 //endpoints to retrieve notifcations datas on notification page
