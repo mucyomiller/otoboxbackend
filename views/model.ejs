@@ -104,6 +104,22 @@
 </form>
 </div><!--.row-->
 </div><!--.box-typical-->
+<% } else if(typeof query !== 'undefined' && query == "model") { %>
+<header class="section-header">
+</header>
+<div class="box-typical box-typical-padding">
+<div class="row" v-cloak>
+<div class="col-md-6 col-sm-6">
+<fieldset class="form-group">
+	<label class="form-label semibold" for="brandid">Choose Brand</label>
+	<select  name="brandid" class="form-control" v-model="brand_id">
+		<option v-for="brand in brands" v-bind:value="brand.objectId">{{ brand.name }}</option>
+	</select>
+</fieldset>
+<a :href="'/model?brand='+brand_id+''" v-if="brand_id" class="btn btn-rounded  btn-success-outline">show models</a>
+</div>
+</div>
+</div><!--.box-typical-->
 <% } else { %>
 <section class="card">
 <header class="card-header card-header-lg">

@@ -22,7 +22,7 @@
 <h5 class="m-t-lg with-border">Spare Parts Infos</h5>
 <form action="/spare/add" method="post" enctype="multipart/form-data" id="app">
 
-<div class="row">
+<div class="row" v-cloak>
 	<div class="col-md-6 col-sm-6">
 		<fieldset class="form-group">
 			<label class="form-label semibold" for="brandid">Choose Brand Spare belongsTo</label>
@@ -33,7 +33,7 @@
 		</fieldset>
 	</div>
 	</div>
-<div class="row">
+<div class="row" v-cloak>
 <div class="col-md-6 col-sm-6">
 	<fieldset class="form-group">
 		<label class="form-label semibold" for="modelid">Choose Model Spare belongsTo</label>
@@ -44,7 +44,7 @@
 	</fieldset>
 </div>
 </div>
-<div class="row">
+<div class="row" v-cloak>
 <div class="col-md-6 col-sm-6">
 	<fieldset class="form-group">
 		<label class="form-label semibold" for="generationid">Choose Generation Spare belongsTo</label>
@@ -277,6 +277,74 @@
 </form>
 </div><!--.row-->
 </div><!--.box-typical-->
+<% } else if(typeof query !== 'undefined' && query == "single") { %>
+<section class="card">
+<header class="card-header card-header-lg">
+Spare Details View of <span class="label label-custom label-pill label-info"><%= spare.get("name") %></span>
+<a href="/spare/remove/<%= spare.id %>" class="btn btn-rounded  btn-danger-outline pull-right" style="width:100px;"> delete </a>
+<a href="/spare/edit/<%= spare.id %>?action=edit" class="btn btn-rounded  btn-success-outline pull-right" style="margin-right:2em;width:100px;"> edit </a>
+</header>
+<div class="card-block">
+<p class="card-text">
+<div class="row">
+<table id="table-edit" class="table table-bordered table-hover">
+<tbody>
+<tr>
+<th>Name</th><td><%= spare.get("name")  %></td>
+</tr>
+<tr>
+<th>Category</th><td><%= spare.get("category").get("name")  %></td>
+</tr>
+<tr>
+<th>Model</th>
+<td>
+<% if(spare && spare.get("generation") && spare.get("generation").get("model")){ %>
+<%=	spare.get("generation").get("model").get("name") %>
+<% }else{ %>
+	<b>None</b>
+<% } %>
+</td>
+</tr>
+<tr>
+<th>Generation</th>
+<td>
+	<% if(spare.get("generation")){ %>
+	<%= spare.get("generation").get("name") %>
+	<% }else{ %>
+		<b>None</b>
+	<% } %>
+</td>		
+</tr>
+<tr>
+<th>Quality</th>
+<td><%= spare.get("quality")  %></td>
+</tr>
+<tr>
+<th>Quantity</th>
+<td><%= spare.get("quantity")  %></td>
+</tr>
+<tr>
+<th>Price</th>
+<td><%= format_currency(spare.get("price"))  %></td>
+</tr>
+<tr>
+<th>Warranty</th>
+<td><%= spare.get("warranty")  %></td>
+</tr>
+<tr>
+<th>Description</th>
+<td><%= spare.get("description")  %></td>
+</tr>
+<tr>
+<th>Image</th>
+<td><center><img src="/<%= spare.get("url") %>" /></center></td>
+</tr>
+</tbody>
+</table>
+</div>
+</p>
+</div>
+</section>
 <% } else { %>
 <section class="card">
 <header class="card-header card-header-lg">
@@ -344,32 +412,4 @@ All Spare parts(<span class="label label-custom label-pill label-info"><%= Spare
 <% } %>
 </div><!--.container-fluid-->
 </div><!--.page-content-->
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script>
-new Vue({
-	el:'#app',
-	data:{
-		brands :[],
-		brand_id:'',
-		models :[],
-		model_id:'',
-		generations :[],
-		generation_id:'',
-	},
-	methods:{
-		fetchGeneration(){
-			axios.get('/api/generations/'+this.model_id).then(response => this.generations = response.data);
-		},
-		fetchModels(){
-			axios.get('/api/models/'+this.brand_id).then(response => this.models = response.data);
-		}
-	}
-	,
-	mounted(){
-		axios.get('/api/brands/').then(response => this.brands = response.data);
-	}
-
-})
-</script>	
 <% include ./partials/footer  %>

@@ -17,7 +17,13 @@
 	    channel: "",
         msg: "",
         counts: 0,
-        notifications: []
+        notifications: [],
+        brands :[],
+		brand_id:'',
+		models :[],
+		model_id:'',
+		generations :[],
+		generation_id:'',
 	},
 	methods:{
         moment: function(date){
@@ -28,7 +34,13 @@
         },
         playSound: function playSound(filename){   
             document.getElementById("sound").innerHTML='<audio autoplay="autoplay"><source src="/public/assets/audio/' + filename + '.mp3" type="audio/mpeg" /><source src="/public/assets/audio/' + filename + '.ogg" type="audio/ogg" /><embed hidden="true" autostart="true" loop="false" src="/public/assets/audio/' + filename +'.mp3" /></audio>';
-        }
+        },
+        fetchGeneration(){
+			axios.get('/api/generations/'+this.model_id).then(response => this.generations = response.data);
+		},
+		fetchModels(){
+			axios.get('/api/models/'+this.brand_id).then(response => this.models = response.data);
+		}
     },
     watch: {
         counts: function () {
@@ -49,6 +61,7 @@
         }
     },
 	mounted(){
+        axios.get('/api/brands/').then(response => this.brands = response.data);
         axios.get('/api/notifications/').then((response) => {
             this.counts = response.data.counts;
             this.notifications = response.data.notifications.map(JSON.parse);

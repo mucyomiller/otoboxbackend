@@ -19,7 +19,7 @@
 </header>
 <section class="card">
 <header class="card-header card-header-lg">
-Showing items on This  order(<span class="label label-custom label-pill label-info"><%= Order.get("items").length %></span>)
+Showing items on This  order (<span class="label label-custom label-pill label-info"><%= Order.get("items").length %></span>)
 </header>
 <div class="card-block">
 <p class="card-text">
@@ -31,6 +31,7 @@ Showing items on This  order(<span class="label label-custom label-pill label-in
 <th>Name</th>
 <th>Price</th>
 <th>Quantity</th>
+<th>More</th>
 </tr>
 </thead>
 <tbody>
@@ -41,6 +42,7 @@ Showing items on This  order(<span class="label label-custom label-pill label-in
 		<td><%= item.product.name  %></td>
 		<td><%= item.product.price  %></td>
 		<td><%= item.quantity  %></td>
+		<td><a href="/spare/item/<%= item.product.pId %>?action=single">view more info</a></td>
 		</tr>
 <%
 }) %>

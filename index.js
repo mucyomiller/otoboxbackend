@@ -253,19 +253,29 @@ app.get('/model',isLoggedIn,function(req,res){
     });
   }
   else{
-  var Model = Parse.Object.extend("Model");
-  var query = new Parse.Query(Model);
-  query.ascending("name");
-  query.include("parent");
-  query.find({
-  success: function(Model) {
-    res.render('model',{Models: Model});
-  },
-  error: function(object, error) {
-  // The object was not retrieved successfully.
-  // error is a Parse.Error with an error code and message.
-  }
-  });
+      if(req.query.brand){
+        console.log("see we got =>"+ req.query.brand);
+        var Model  = Parse.Object.extend("Model");
+        var Brand  = Parse.Object.extend("Brand");
+        var mBrand = Brand.createWithoutData(req.query.brand);
+        var query  = new Parse.Query(Model);
+        query.ascending("name");
+        query.equalTo("parent",mBrand);
+        query.include("parent");
+        query.find({
+        success: function(Model) {
+          console.log("let see=>"+JSON.stringify(Model))
+          res.render('model',{Models: Model});
+        },
+        error: function(object, error) {
+        // The object was not retrieved successfully.
+        // error is a Parse.Error with an error code and message.
+        }
+        });
+      }else
+      {
+        res.render('model',{query: "model"});
+      }
   }
 });
 
@@ -484,7 +494,7 @@ query.get(req.params.id, {
 
 //spares
 app.get('/spare',isLoggedIn,function(req,res){
-  if(req.query.action){
+  if(req.query.action == "edit" || req.query.action == "new"){
     var Spare = Parse.Object.extend("Spare");
     var mSpare = new Parse.Query(Spare);
     var Generation = Parse.Object.extend("Generation");
@@ -517,7 +527,6 @@ app.get('/spare',isLoggedIn,function(req,res){
     var Spare = Parse.Object.extend("Spare");
     var query = new Parse.Query(Spare);
     query.descending("createdAt");
-    query.include("model");
     query.include("generation");
     query.include("generation.model");
     query.include("category");
@@ -532,7 +541,29 @@ app.get('/spare',isLoggedIn,function(req,res){
     });
   }
 });
-
+//get single spare Details
+app.get('/spare/item/:itemId',isLoggedIn,(req,res)=>{
+  if(req.query.action == "single" && req.params.itemId){
+  var Spare = Parse.Object.extend("Spare");
+  var query = new Parse.Query(Spare);
+  query.descending("createdAt");
+  query.include("generation");
+  query.include("generation.model");
+  query.include("category");
+  query.get(req.params.itemId,{
+  success: function(Spare) {
+    res.render('spare',{query:req.query.action,spare: Spare});
+  },
+  error: function(object, error) {
+  // The object was not retrieved successfully.
+  // error is a Parse.Error with an error code and message.
+  }
+  });
+  }else
+  {
+    res.json({"status":false});
+  }
+});
 app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   var Spare = Parse.Object.extend("Spare");
   var mSpare = new Spare();
@@ -789,6 +820,115 @@ app.post('/supplier/edit/:id',isLoggedIn,(req,res)=>{
   });
   
 
+//add contacts routes
+//get contacts
+app.get('/contacts',isLoggedIn,function(req,res){
+  if(req.query.action){
+      res.render('contacts',{query:req.query.action});
+  }
+  else{
+    var Contact = Parse.Object.extend("Contact");
+    var query = new Parse.Query(Contact);
+    query.find({
+    success: function(Contact) {
+      res.render('contacts',{Contacts: Contact});
+    },
+    error: function(object, error) {
+    // The object was not retrieved successfully.
+    // error is a Parse.Error with an error code and message.
+    }
+    });
+  }
+});
+
+//suppliers add
+app.post('/contacts/add',isLoggedIn,(req,res)=>{
+  var Contact = Parse.Object.extend("Contact");
+  // Create a new instance of that class.
+  var mContact = new Contact();
+  mContact.set("website",req.body.contactwebsite);
+  mContact.set("email", req.body.contactemail);
+  mContact.set("phone", req.body.contactphone);
+  mContact.set("lat",req.body.contactlatitude);
+  mContact.set("long",req.body.contactlongitude);
+  mContact.save(null, {
+    success: function(mContact) {
+      // Execute any logic that should take place after the object is saved.
+      console.info('New object created with objectId: ' + mContact.id);
+    },
+    error: function(mContact, error) {
+      // Execute any logic that should take place if the save fails.
+      // error is a Parse.Error with an error code and message.
+      console.error('Failed to create new object, with error code: ' + error.message);
+    }
+  });
+  res.redirect('/contacts');
+});
+
+//supplier remove
+app.get('/contacts/remove/:id',isLoggedIn,(req,res)=>{
+
+  var Contact = Parse.Object.extend("Contact");
+  // Create a new instance of that class.
+  var mContact = Contact.createWithoutData(req.params.id);
+  mContact.destroy({
+    success: function(mContact) {
+      // The object was deleted from the Parse Cloud.
+      console.log("Contact object delete it's id is"+mContact.id);
+      req.flash('message',req.flash('Successfully deleted'));
+    },
+    error: function(mContact, error) {
+      // The delete failed.
+      // error is a Parse.Error with an error code and message.
+      req.flash('message',req.flash('error occured!'));
+    }
+  });
+  res.redirect('/contacts');
+});
+
+//supplier edit
+app.get('/contacts/edit/:id',isLoggedIn,(req,res)=>{
+
+  if(req.query.action){
+    var Contact = Parse.Object.extend("Contact");
+    var query = new Parse.Query(Contact);
+    query.get(req.params.id, {
+      success: function(contact) {
+        // The object was retrieved successfully.
+        res.render('contacts',{query:req.query.action,Contact:contact});
+      },
+      error: function(object, error) {
+        // The object was not retrieved successfully.
+        // error is a Parse.Error with an error code and message.
+      }
+    });
+   
+    }
+  });
+app.post('/contacts/edit/:id',isLoggedIn,(req,res)=>{
+    
+        var Contact = Parse.Object.extend("Contact");
+        var query = new Parse.Query(Contact);
+        query.get(req.params.id, {
+          success: function(contact) {
+            // The object was retrieved successfully.
+            // Now let update it
+            contact.set("website",req.body.contactwebsite);
+            contact.set("email", req.body.contactemail);
+            contact.set("phone", req.body.contactphone);
+            contact.set("long",req.body.contactlongitude);
+            contact.set("lat",req.body.contactlatitude);
+            contact.save();
+            res.redirect('/contacts');
+          },
+          error: function(object, error) {
+            // The object was not retrieved successfully.
+            // error is a Parse.Error with an error code and message.
+          }
+        });
+  });
+
+//ends of contacts routes
 //category
 app.get('/category',isLoggedIn,function(req,res){
   if(req.query.action){
