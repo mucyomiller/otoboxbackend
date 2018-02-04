@@ -144,7 +144,7 @@ All Models(<span class="label label-custom label-pill label-info"><%= total_resu
 </thead>
 <tbody>
 <%
-var i =1;
+var i=(page -1)*plimit+1;
 Models.forEach((model)=>{
 %>
 		<tr>
