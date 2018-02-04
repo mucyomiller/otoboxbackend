@@ -42,8 +42,8 @@
 <div class="site-header-content">
 <div class="site-header-content-in">
 <div class="site-header-shown">
-<div class="dropdown dropdown-notification notif">
-<a href="#" class="header-alarm dropdown-toggle" v-bind:class="{ active: isActive }" id="dd-notification" data-toggle="dropdown">
+<div class="dropdown dropdown-notification notif" v-if="isActive" v-cloak>
+<a href="#" class="header-alarm dropdown-toggle active" id="dd-notification" data-toggle="dropdown">
 <i class="font-icon-alarm"></i>
 </a>
 <div class="dropdown-menu dropdown-menu-right dropdown-menu-notif" aria-labelledby="dd-notification">

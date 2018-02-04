@@ -8,6 +8,19 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="/public/assets/js/cookie.min.js"></script>
 <script>
+
+    //define custom function to search Array.indexOf using RegEx
+    if (typeof Array.prototype.reIndexOf === 'undefined') {
+        Array.prototype.reIndexOf = function (regex) {
+        for (var i in this) {
+            if (this[i].toString().match(regex)) {
+                return parseInt(i);
+            }
+        }
+        return -1;
+    };
+    }
+    //open socket connection from client to server
     var socket = io();
     new Vue({
 	el:'#VueApp',
@@ -18,29 +31,51 @@
         msg: "",
         counts: 0,
         notifications: [],
-        brands :[],
-		brand_id:'',
-		models :[],
-		model_id:'',
-		generations :[],
-		generation_id:'',
+        categories: [],
+        category_id: '',
+        brands: [],
+		brand_id: '',
+		models: [],
+		model_id: '',
+		generations: [],
+        generation_id: '',
+        rows: [],
+        //paginations vars
+        total_result : 0,
+        page: 1,
+        plimit: 50,
+        pages: []
 	},
 	methods:{
+        addRow: function(){
+          this.rows.push({name:"",desc:""});
+        },
+        removeRow: function(row){
+        // console.log(row);
+        let index = this.rows.indexOf(row);
+        this.rows.splice(index, 1);
+        },
         moment: function(date){
             return moment(date).fromNow();
         },
         viewed: function(order){
             socket.emit('from-client',order);
         },
+        //playing sound for notifications
         playSound: function playSound(filename){   
             document.getElementById("sound").innerHTML='<audio autoplay="autoplay"><source src="/public/assets/audio/' + filename + '.mp3" type="audio/mpeg" /><source src="/public/assets/audio/' + filename + '.ogg" type="audio/ogg" /><embed hidden="true" autostart="true" loop="false" src="/public/assets/audio/' + filename +'.mp3" /></audio>';
         },
+        //getting generation based on selected model id
         fetchGeneration(){
 			axios.get('/api/generations/'+this.model_id).then(response => this.generations = response.data);
-		},
+        },
+        //getting models based on selected brand id
 		fetchModels(){
 			axios.get('/api/models/'+this.brand_id).then(response => this.models = response.data);
-		}
+        },
+        getURLParameter:function getURLParameter(name) {
+            return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+        }
     },
     watch: {
         counts: function () {
@@ -51,6 +86,7 @@
                 this.isActive = false;
             }
         },
+        //watch and toggle sound notification settings
         isChecked: function(){
             if(this.isChecked){
                 cookie.set('notificationSound', true);
@@ -60,12 +96,98 @@
             }
         }
     },
+    computed: {
+        //getting rows datas as string(stringified)
+        rowData: function(){
+            return this.rows.length > 0 ? JSON.stringify(this.rows) : null;
+        },
+        filterUrl : function(){
+            let url ="/spare";
+            if(this.category_id){
+                url +="?category="+this.category_id;
+            }
+            if(this.category_id && this.generation_id){
+                url +="&generation="+this.generation_id;
+            }else if(this.generation_id){
+                url +="?generation="+this.generation_id;
+            }
+            return url;
+        },
+        previousLink: function(){
+            if(this.page >= 2){
+                let path = window.location.pathname+window.location.search;
+                if(path != "/spare" || path != "/order" || path != "/model"){
+                    //generate proper url
+                    let arr = path.split("&");
+                    if(arr.length >1){
+                        let rindex = arr.reIndexOf(/page/);
+                        if(rindex != -1){
+                            arr.splice(rindex); 
+                        }
+                        path = arr.join("&");
+                     return path+"&page="+(this.page-1);
+                    }
+                    let arr2 = path.split("=");
+                    let rindex2 = arr2.reIndexOf(/page/);
+                    if(rindex2 != -1){
+                        arr2.splice(-1);
+                    }
+                    else
+                    {
+                        path = arr2.join("=");
+                        return path+"&page="+(this.page-1);
+                    }
+                    path = arr2.join();
+                    return path+"="+(this.page-1);
+                }
+                return path+"?page="+(this.page-1); 
+            }
+            return "#";
+        },
+        nextLink: function(){
+            if(this.page < Math.ceil(this.total_result/this.plimit)){
+                let path = window.location.pathname+window.location.search;
+                if(path != "/spare" || path != "/order" || path != "/model"){
+                    //generate proper url
+                    let arr = path.split("&");
+                    if(arr.length >1){
+                        let rindex = arr.reIndexOf(/page/);
+                        if(rindex != -1){
+                            arr.splice(rindex); 
+                        }
+                        path = arr.join("&");
+                     return path+"&page="+(this.page+1);
+                    }
+                    let arr2 = path.split("=");
+                    let rindex2 = arr2.reIndexOf(/page/);
+                    if(rindex2 != -1){
+                        arr2.splice(-1);
+                    }else
+                    {
+                        path = arr2.join("=");
+                        return path+"&page="+(this.page+1);
+                    }
+                    path = arr2.join();
+                    return path+"="+(this.page+1);
+                }
+                return path+"?page="+(this.page+1); 
+            }
+            return "#";
+        }
+    },
 	mounted(){
+        //add single empty description rows
+        this.addRow();
+        //getting brands
         axios.get('/api/brands/').then(response => this.brands = response.data);
+        //getting categories
+        axios.get('/api/categories/').then(response => this.categories = response.data);
+        //getting available notification from redis store
         axios.get('/api/notifications/').then((response) => {
             this.counts = response.data.counts;
             this.notifications = response.data.notifications.map(JSON.parse);
         });
+        //listen to new notification from WebSocket Server
         socket.on('from-server',(message)=>{
         this.channel = message.channel,
         this.msg = message.message,
@@ -74,9 +196,51 @@
         if(this.isChecked){
             this.playSound('notify');
         }
-        console.log(JSON.stringify(message));
+        // console.log(JSON.stringify(message));
     });
-	}
+    //initialize vars from query params if available
+    if(this.getURLParameter("generation")){this.generation_id = this.getURLParameter("generation");}
+    if(this.getURLParameter("category")){this.category_id = this.getURLParameter("category");}
+    //initialize paginations vars if available
+    this.total_result = this.$refs.total_result.value ? parseInt(this.$refs.total_result.value) : 0;
+    this.page         = this.$refs.page.value ? parseInt(this.$refs.page.value) : 1;
+    this.plimit    = this.$refs.plimit.value ? parseInt(this.$refs.plimit.value) : 50;
+
+    //calculate pages and push into pages []
+    //generate valid url
+    function generateUrl(){
+        let path = window.location.pathname+window.location.search;
+        if(path != "/spare"){
+        //generate proper url
+        let arr = path.split("&");
+        if(arr.length >1){
+            let rindex = arr.reIndexOf(/page/);
+            if(rindex != -1){
+                arr.splice(rindex); 
+            }
+            path = arr.join("&");
+            return path+"&page=";
+        }
+        let arr2 = path.split("=");
+        let rindex2 = arr2.reIndexOf(/page/);
+        if(rindex2 != -1){
+            arr2.splice(-1);
+        }else
+        {
+            path = arr2.join("=");
+            return path+"&page=";
+
+        }
+        path = arr2.join();
+        return path+"=";
+        }
+        return path+"?page="; 
+    }
+    //end of generating valid url
+    for(let i = 1 ;i <= Math.ceil(this.total_result/this.plimit); i++){
+            this.pages.push(generateUrl()+i);
+    }
+  }
 }) 
 </script>
 <script src="/public/dashboard/js/lib/jquery/jquery.min.js"></script>

@@ -35,8 +35,10 @@ Showing items on This  order (<span class="label label-custom label-pill label-i
 </tr>
 </thead>
 <tbody>
-<% var i=1;Order.get("items").forEach((item)=>{
-	%>
+<% 
+var i=1;
+Order.get("items").forEach((item)=>{
+%>
 		<tr>
 		<td><%= i++  %></td>
 		<td><%= item.product.name  %></td>
@@ -62,6 +64,9 @@ All Orders(<span class="label label-custom label-pill label-info"><%= Orders.len
 <div class="card-block">
 <p class="card-text">
 <div class="row">
+<input type="hidden" name="total_result" ref="total_result"   value="<%= total_result %>" />
+<input type="hidden" name="page"         ref="page"           value="<%= page %>" />
+<input type="hidden" name="plimit"    ref="plimit"      value="<%= plimit %>" />
 <table id="table-edit" class="table table-bordered table-hover">
 <thead>
 <tr>
@@ -78,8 +83,10 @@ All Orders(<span class="label label-custom label-pill label-info"><%= Orders.len
 </tr>
 </thead>
 <tbody>
-<% var i=1;Orders.forEach((order)=>{
-	%>
+<% 
+var i=(page -1)*plimit+1;
+Orders.forEach((order)=>{
+%>
 		<tr>
 		<td><%= i++  %></td>
 		<td><%= order.get("names")  %></td>
@@ -96,6 +103,27 @@ All Orders(<span class="label label-custom label-pill label-info"><%= Orders.len
 }) %>
 </tbody>
 </table>
+<!-- pagination navs -->
+<div class="row pull-right" style="margin-right:2em;" v-cloak>
+<nav aria-label="Page navigation example">
+<ul class="pagination">
+	<li class="page-item">
+	<a class="page-link" :href="previousLink" aria-label="Previous">
+		<span aria-hidden="true">&laquo;</span>
+		<span class="sr-only">Previous</span>
+	</a>
+	</li>
+	<li class="page-item" v-for="(link,index) in pages "><a class="page-link" :href="link">{{ ++index }}</a></li>
+	<li class="page-item">
+	<a class="page-link" :href="nextLink" aria-label="Next">
+		<span aria-hidden="true">&raquo;</span>
+		<span class="sr-only">Next</span>
+	</a>
+	</li>
+</ul>
+</nav>
+</div>
+<!-- end of pagination navs -->
 </div>
 </p>
 </div>

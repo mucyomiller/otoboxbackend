@@ -69,6 +69,10 @@ var app = express();
 app.locals.fromNow = function(date){
   return moment(date).fromNow();
 }
+//creating ejs template function to parse string in jsonable object
+app.locals.jsonparse = function(data){
+  return JSON.parse(data);
+}
 //creating format_currency function
 // include the currency code 'USD' 
 let opts = { format: '%v %c', code: 'RWF' }
@@ -158,7 +162,9 @@ app.post('/brand/add',isLoggedIn,upload.single('brandpic'),(req,res)=>{
   // Create a new instance of that class.
   var mBrand = new Brand();
   mBrand.set("name",req.body.brandname);
-  mBrand.set("url",req.file.path);
+  if(req.file  !== undefined){
+    mBrand.set("url",req.file.path);
+  }
   mBrand.save(null, {
     success: function(mBrand) {
       // Execute any logic that should take place after the object is saved.
@@ -254,18 +260,32 @@ app.get('/model',isLoggedIn,function(req,res){
   }
   else{
       if(req.query.brand){
-        console.log("see we got =>"+ req.query.brand);
+        //paginations vars
+        let page = req.query.page ? (parseInt(req.query.page) -1) : 0;
+        //page must be 0 and greater
+        page = page < 0 ? 0 : page;
+        let per_page_display = req.query.plimit  ? parseInt(req.query.plimit) : 50;
+        let total_result;
+
         var Model  = Parse.Object.extend("Model");
         var Brand  = Parse.Object.extend("Brand");
         var mBrand = Brand.createWithoutData(req.query.brand);
         var query  = new Parse.Query(Model);
-        query.ascending("name");
         query.equalTo("parent",mBrand);
+        //counts result before
+          query.count().then((count)=>{
+            total_result = count;
+          });  
+        query.ascending("name");
         query.include("parent");
+
+        //limit & skip
+        let limit = per_page_display > total_result ? 100 : per_page_display;
+        query.limit(limit);
+        query.skip(page * per_page_display);
         query.find({
         success: function(Model) {
-          console.log("let see=>"+JSON.stringify(Model))
-          res.render('model',{Models: Model});
+          res.render('model',{Models: Model,total_result:total_result,page:page+1,plimit:per_page_display});
         },
         error: function(object, error) {
         // The object was not retrieved successfully.
@@ -416,7 +436,9 @@ app.post('/generation/add',isLoggedIn,upload.single('generationpic'),(req,res)=>
   var mGeneration = new Generation();
   mGeneration.set("name",req.body.generationname);
   mGeneration.set("released", req.body.released);
-  mGeneration.set("url",req.file.path);
+  if(req.file  !== undefined){
+    mGeneration.set("url",req.file.path);
+  }
   mGeneration.set("model", mModel);
   mGeneration.save(null, {
     success: function(mGeneration) {
@@ -480,7 +502,7 @@ query.get(req.params.id, {
     generation.set("released", req.body.released);
     if (req.file !== undefined) {
       generation.set("url",req.file.path);
-      }
+    }
     // Now let update it
     generation.save();
     res.redirect('/generation/'+req.body.modelid);
@@ -524,15 +546,46 @@ app.get('/spare',isLoggedIn,function(req,res){
     });
   }
   else{
+
+    //paginations vars
+    let page = req.query.page ? (parseInt(req.query.page) -1) : 0;
+    //page must be 0 and greater
+    page = page < 0 ? 0 : page;
+    let per_page_display = req.query.plimit  ? parseInt(req.query.plimit) : 50;
+    let total_result;
+
     var Spare = Parse.Object.extend("Spare");
     var query = new Parse.Query(Spare);
+    
+    //counts result before
+    //we will optimize it later using redis to store counts instead of pulling from db each time query executed!
+    query.count().then((count)=>{
+    total_result = count;
+    });
+    //limit & skip
+    let limit = per_page_display > total_result ? 100 : per_page_display;
+    query.limit(limit);
+    query.skip(page * per_page_display);
+    //filter is available
+    //category
+    if(req.query.category){
+      let Category  = Parse.Object.extend("Category");
+      let mCategory = Category.createWithoutData(req.query.category);
+      query.equalTo("category",mCategory);
+    }
+    //generation
+    if(req.query.generation){
+      let Generation = Parse.Object.extend("Generation");
+      let mGeneration = Generation.createWithoutData(req.query.generation);
+      query.equalTo("generation",mGeneration);
+    }
     query.descending("createdAt");
     query.include("generation");
     query.include("generation.model");
     query.include("category");
     query.find({
     success: function(Spare) {
-      res.render('spare',{Spares: Spare});
+      res.render('spare',{Spares: Spare,total_result:total_result,page:page+1,plimit:per_page_display});
     },
     error: function(object, error) {
     // The object was not retrieved successfully.
@@ -568,8 +621,6 @@ app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   var Spare = Parse.Object.extend("Spare");
   var mSpare = new Spare();
 
-  var Model = Parse.Object.extend("Model");
-  var mModel =Model.createWithoutData(req.body.modelid);
   var Generation = Parse.Object.extend("Generation");
   var mGeneration =Generation.createWithoutData(req.body.generationid);
   var Category = Parse.Object.extend("Category");
@@ -578,23 +629,23 @@ app.post('/spare/add',isLoggedIn,upload.single('sparepic'),(req,res)=>{
   mSpare.set("name",req.body.sparename);
   mSpare.set("quality", req.body.sparequality);
   mSpare.set("quantity", req.body.sparequantity);
-  mSpare.set("url",req.file.path);
+  if (req.file !== undefined) {
+    mSpare.set("url",req.file.path);
+  }
   mSpare.set("price",req.body.spareprice);
   mSpare.set("warranty",req.body.sparewarranty);
   if(req.body.generationid  !== undefined){
-    mSpare.set("generation",null);  
-  }else
-  {
     mSpare.set("generation", mGeneration);
-  }
-  if(req.body.generationid  !== undefined){
-    mSpare.set("model", null);
   }else
   {
-    mSpare.set("model", mModel);
+    mSpare.set("generation",null);  
   }
   mSpare.set("category",mCategory);
-  mSpare.set("description", req.body.sparedesc);
+  if(req.body.sparedesc){
+    //nevermind store it as string
+    //we will parse it at front ends!
+    mSpare.set("description", req.body.sparedesc);
+  }
   mSpare.save(null, {
     success: function(mSpare) {
       // Execute any logic that should take place after the object is saved.
@@ -674,8 +725,6 @@ app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
           query.get(req.params.id, {
             success: function(spare) {
               // The object was retrieved successfully.
-              var Model = Parse.Object.extend("Model");
-              var mModel = Model.createWithoutData(req.body.modelid);
               var Generation = Parse.Object.extend("Generation");
               var mGeneration = Generation.createWithoutData(req.body.generationid);
               var Category = Parse.Object.extend("Category");
@@ -695,12 +744,6 @@ app.post('/spare/edit/:id',isLoggedIn,upload.single('sparepic'),(req,res)=>{
               }else
               {
                 spare.set("generation",null);  
-              }
-              if(req.body.modelid !== undefined){
-                spare.set("model", mModel);
-              }else
-              {
-                spare.set("model", null);
               }
               spare.set("category",mCategory);
               spare.set("description",req.body.sparedesc);
@@ -1035,12 +1078,27 @@ app.get('/order',isLoggedIn,function(req,res){
       res.render('order',{query:req.query.action});
   }
   else{
+    //paginations vars
+    let page = req.query.page ? (parseInt(req.query.page) -1) : 0;
+    //page must be 0 and greater
+    page = page < 0 ? 0 : page;
+    let per_page_display = req.query.plimit  ? parseInt(req.query.plimit) : 50;
+    let total_result;
+
     var Order = Parse.Object.extend("Order");
     var query = new Parse.Query(Order);
+    //counts result before
+    query.count().then((count)=>{
+        total_result = count;
+    });  
+    //limit & skip
+    let limit = per_page_display > total_result ? 100 : per_page_display;
+    query.limit(limit);
+    query.skip(page * per_page_display);
     query.descending("createdAt");
     query.find({
     success: function(Order) {
-      res.render('order',{Orders: Order});
+      res.render('order',{Orders: Order,total_result:total_result,page:page+1,plimit:per_page_display});
     },
     error: function(object, error) {
     // The object was not retrieved successfully.
@@ -1123,6 +1181,21 @@ app.get('/api/brands',function(req,res){
   query.find({
   success: function(Brand) {
     res.json(Brand);
+  },
+  error: function(object, error) {
+  // The object was not retrieved successfully.
+  // error is a Parse.Error with an error code and message.
+  }
+  });
+});
+
+//getting categories
+app.get('/api/categories',function(req,res){
+  var Category = Parse.Object.extend("Category");
+  var query = new Parse.Query(Category);
+  query.find({
+  success: function(Category) {
+    res.json(Category);
   },
   error: function(object, error) {
   // The object was not retrieved successfully.
