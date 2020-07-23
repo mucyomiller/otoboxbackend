@@ -26,7 +26,7 @@
     "morgan": "^1.9.1",
     "multer": "^1.3.0",
     "nodemon": "^1.12.1",
-    "parse": "~1.8.0",
+    "parse": "~2.10.0",
     "parse-dashboard": "^1.1.0",
     "parse-server": "*",
     "passport": "^0.4.0",
