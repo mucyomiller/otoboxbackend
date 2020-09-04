@@ -19,7 +19,7 @@
     "express": "~4.11.x",
     "express-session": "^1.15.5",
     "format-currency": "^1.0.0",
-    "kerberos": "~0.0.x",
+    "kerberos": "~1.0.x",
     "method-override": "^2.3.9",
     "moment": "^2.18.1",
     "mongoose": "^4.11.12",
